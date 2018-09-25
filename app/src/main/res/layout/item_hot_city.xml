@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tv_hot_city_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="5dp"
+        android:drawableStart="@drawable/icon_title_decoration"
+        android:text="热门城市"
+        android:textColor="#FFE7C0"
+        android:textSize="14.4sp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_item_hot_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_hot_city_title"
+        android:layout_marginTop="10dp"/>
+</RelativeLayout>

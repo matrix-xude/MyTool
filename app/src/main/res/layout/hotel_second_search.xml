@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#494949"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
+
+                <RelativeLayout
+                    android:id="@+id/rl_hotel_second_search_destination"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="国内/国外目的地"
+                        android:textColor="#A4A4A4"
+                        android:textSize="12.48sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_hotel_second_search_1"
+                        android:layout_marginTop="5dp"
+                        android:text="青岛"
+                        android:textColor="@color/white"
+                        android:textSize="17.28sp"/>
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="0.72dp"
+                    android:layout_height="match_parent"
+                    android:background="#616161"/>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/iv_hotel_second_search_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/icon_hotel_location"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_hotel_second_search_location"
+                        android:layout_centerHorizontal="true"
+                        android:text="当前城市"
+                        android:textColor="#A4A4A4"
+                        android:textSize="12.48sp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.96dp"
+                android:background="#616161"/>
+
+            <LinearLayout
+                android:id="@+id/ll_hotel_second_search_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="入住"
+                        android:textColor="#A4A4A4"
+                        android:textSize="12.48sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_check_in"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_hotel_second_search_2"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/white"
+                        android:textSize="17.28sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        app:cardCornerRadius="13dp">
+
+                        <TextView
+                            android:id="@+id/tv_hotel_second_search_day_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#FDA249"
+                            android:gravity="center"
+                            android:paddingBottom="4dp"
+                            android:paddingEnd="15dp"
+                            android:paddingStart="15dp"
+                            android:paddingTop="4dp"
+                            android:textColor="@color/white"
+                            android:textSize="12.48sp"/>
+                    </android.support.v7.widget.CardView>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="离店"
+                        android:textColor="#A4A4A4"
+                        android:textSize="12.48sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_hotel_second_search_check_out"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_hotel_second_search_3"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/white"
+                        android:textSize="17.28sp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.96dp"
+                android:background="#616161"/>
+
+            <TextView
+                android:id="@+id/tv_hotel_second_search_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:text="关键字/位置/酒店名"
+                android:textColor="#A4A4A4"
+                android:textSize="14.4sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.96dp"
+                android:background="#616161"/>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                app:cardCornerRadius="5dp">
+
+                <TextView
+                    android:id="@+id/tv_hotel_second_search_query"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="查询"
+                    android:textColor="@color/white"
+                    android:textSize="21.12sp"/>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>
