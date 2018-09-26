@@ -10,39 +10,30 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vondear.rxtool.RxDataTool;
-import com.vondear.rxtool.RxImageTool;
-
-import jdjt.com.homepager.util.ViewUtil;
-
 /**
  * Created by xxd on 2018/7/27.
  */
 
-public class CommonViewHolderRecycler extends RecyclerView.ViewHolder {
+public class ViewHolderRecycler extends RecyclerView.ViewHolder {
 
     private SparseArray<View> mViews;
     private View mConvertView;
-    private Context mContext;
 
-    public CommonViewHolderRecycler(Context context, View itemView, ViewGroup parent) {
+    private ViewHolderRecycler(View itemView) {
         super(itemView);
-        mContext = context;
         mConvertView = itemView;
         mViews = new SparseArray<>();
     }
 
-    public static CommonViewHolderRecycler get(Context context, ViewGroup parent, int layoutId, float height) {
+    public static ViewHolderRecycler get(Context context, ViewGroup parent, int layoutId, AdapterRecycler.Builder builder) {
         View itemView = LayoutInflater.from(context).inflate(layoutId, parent, false);
-        if (height > 0) {
-            ViewUtil.setHeight(itemView, height);
+        if (builder != null) {
+            if (builder.getItemWidth() > 0)
+                RecyclerUtil.setWidthPx(itemView, builder.getItemWidth());
+            if (builder.getItemHeight() > 0)
+                RecyclerUtil.setHeightPx(itemView, builder.getItemHeight());
         }
-        return new CommonViewHolderRecycler(context, itemView, parent);
-    }
-
-
-    public static CommonViewHolderRecycler get(Context context, ViewGroup parent, int layoutId) {
-        return get(context, parent, layoutId, 0);
+        return new ViewHolderRecycler(itemView);
     }
 
 
@@ -61,13 +52,13 @@ public class CommonViewHolderRecycler extends RecyclerView.ViewHolder {
         return (T) view;
     }
 
-    public CommonViewHolderRecycler setText(int viewId, CharSequence text) {
+    public ViewHolderRecycler setText(int viewId, CharSequence text) {
         TextView tv = getView(viewId);
         tv.setText(text);
         return this;
     }
 
-    public CommonViewHolderRecycler setImageResource(int viewId, int resId) {
+    public ViewHolderRecycler setImageResource(int viewId, int resId) {
         ImageView view = getView(viewId);
         view.setImageResource(resId);
         return this;
@@ -78,7 +69,7 @@ public class CommonViewHolderRecycler extends RecyclerView.ViewHolder {
         view.setImageBitmap(bitmap);
     }
 
-    public CommonViewHolderRecycler setOnClickListener(int viewId, View.OnClickListener listener) {
+    public ViewHolderRecycler setOnClickListener(int viewId, View.OnClickListener listener) {
         View view = getView(viewId);
         view.setOnClickListener(listener);
         return this;

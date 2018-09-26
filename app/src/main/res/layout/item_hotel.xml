@@ -38,7 +38,6 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="美国西海岸+黄石公园12日跟团游纯玩无自费+夏威夷火奴鲁"
                 android:textColor="@color/white"
                 android:textSize="14.4sp"/>
 

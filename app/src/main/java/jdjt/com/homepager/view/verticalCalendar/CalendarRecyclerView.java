@@ -13,8 +13,8 @@ import java.util.List;
 
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CalendarPopDecoration;
-import jdjt.com.homepager.view.commonRecyclerView.CommonAdapterRecycler;
-import jdjt.com.homepager.view.commonRecyclerView.CommonViewHolderRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 /**
  * Created by xxd on 2018/9/14.
@@ -52,9 +52,9 @@ public class CalendarRecyclerView extends RecyclerView {
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         setLayoutManager(layoutManager);
-        setAdapter(new CommonAdapterRecycler<MonthBean>(getContext(), R.layout.item_calendar_recycler, dataList) {
+        setAdapter(new AdapterRecycler<MonthBean>(R.layout.item_calendar_recycler, dataList) {
             @Override
-            public void convert(CommonViewHolderRecycler holder, MonthBean monthBean, int position) {
+            public void convert(ViewHolderRecycler holder, MonthBean monthBean, int position) {
                 holder.setText(R.id.tv_item_calendar_recycler_month, monthBean.getYear() + "年" + monthBean.getMonth() + "月");
                 HotelMonthView hotelMonthView = holder.getView(R.id.hotel_month_view_calendar_recycler);
                 hotelMonthView.setCurrentDate(monthBean.getYear(), monthBean.getMonth(), monthBean.getDelegate());
@@ -76,8 +76,8 @@ public class CalendarRecyclerView extends RecyclerView {
                                 mDelegate.mCurrentStartDate = calendarData;
                             } else { // 点击了入店之后的日期
                                 mDelegate.mCurrentEndDate = calendarData;
-                                if(onRangeSelectedListener != null){
-                                    onRangeSelectedListener.onRangeSelected(mDelegate.mCurrentStartDate,mDelegate.mCurrentEndDate);
+                                if (onRangeSelectedListener != null) {
+                                    onRangeSelectedListener.onRangeSelected(mDelegate.mCurrentStartDate, mDelegate.mCurrentEndDate);
                                 }
                             }
                         } else {  // 没有选择

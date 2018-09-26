@@ -28,18 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jdjt.com.homepager.R;
-import jdjt.com.homepager.adapter.HomeHolidayHotelAdapter;
-import jdjt.com.homepager.adapter.HomeHolidaySetMealAdapter;
 import jdjt.com.homepager.adapter.HomeModuleAdapter;
 import jdjt.com.homepager.adapter.VerticalBannerAdapter;
+import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.decoration.HomeModuleDecoration;
-import jdjt.com.homepager.decoration.SimpleItemDecoration;
 import jdjt.com.homepager.domain.HomeFirstModuleBean;
 import jdjt.com.homepager.domain.HomeFirstModuleItemBean;
 import jdjt.com.homepager.domain.SimpleString;
 import jdjt.com.homepager.framgnet.HotRecommendFragment;
 import jdjt.com.homepager.util.MakeDataUtil;
 import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 /**
  * Created by xxd on 2018/9/5.
@@ -74,60 +74,112 @@ public class HomeActivity extends BaseActivity {
         addVerticalBanner();
         addHotRecommend();
         addHotActivity();
-        addHolidaySetMeal();
-        addHolidayHotel();
+        refreshHolidaySetMeal();
+        refreshHolidayHotel();
     }
 
+    private View mViewHolidayHotel; // 度假酒店view
+    private AdapterRecycler mAdapterHolidayHotel; // 度假酒店adapter
+    private List<SimpleString> mDataHolidayHotel;// 度假酒店数据
+
     /**
-     * 添加度假酒店模块
+     * 刷新度假酒店模块
      */
-    private void addHolidayHotel() {
-        int itemHeight = 132;
+    private void refreshHolidayHotel() {
+        int itemHeight = RxImageTool.dp2px(132);
         int maxShowNumber = 6;
-        int divideSpace = 1;
-        List<SimpleString> dataList = MakeDataUtil.makeSimpleString(8, "度假酒店");
-        int size = dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber;
+        int divideSpace = RxImageTool.dp2px(1);
+        mDataHolidayHotel = MakeDataUtil.makeSimpleString(8, "度假酒店");
 
-        View view = View.inflate(this, R.layout.home_holiday_hotel, null);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_home_view_holiday_hotel);
-        ViewUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new HomeHolidayHotelAdapter(dataList, itemHeight, maxShowNumber));
-        recyclerView.addItemDecoration(new SimpleItemDecoration(divideSpace, Color.parseColor("#3E3F41")));
+        if (mViewHolidayHotel == null) {
+            mViewHolidayHotel = View.inflate(this, R.layout.home_holiday_hotel, null);
+            llContent.addView(mViewHolidayHotel);
 
-        llContent.addView(view);
+            // 查看更多
+            TextView tvMore = mViewHolidayHotel.findViewById(R.id.tv_home_holiday_hotel_more);
+            tvMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            // 热门酒店
+            RecyclerView recyclerView = mViewHolidayHotel.findViewById(R.id.recycler_home_view_holiday_hotel);
+            mAdapterHolidayHotel = new AdapterRecycler<SimpleString>(R.layout.item_hotel, mDataHolidayHotel,
+                    new AdapterRecycler.Builder().setItemHeight(itemHeight).setMaxShowCount(maxShowNumber)) {
+                @Override
+                public void convert(ViewHolderRecycler holder, SimpleString simpleString, int position) {
+                    holder.setText(R.id.tv_item_hotel_name, simpleString.getName());
+                }
+            };
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+                @Override
+                public boolean canScrollVertically() {
+                    return false;
+                }
+            };
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(mAdapterHolidayHotel);
+            recyclerView.addItemDecoration(new CommonDecoration(divideSpace, 1, Color.parseColor("#3E3F41")));
+            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
+        } else {
+            mAdapterHolidayHotel.notifyDataSetChanged();
+            RecyclerView recyclerView = mViewHolidayHotel.findViewById(R.id.recycler_home_view_holiday_hotel);
+            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
+        }
     }
 
+    private View mViewHolidaySetMeal; // 度假套餐view
+    private AdapterRecycler mAdapterHolidaySetMeal; // 度假套餐adapter
+    private List<SimpleString> mDataHolidaySetMeal;// 度假套餐数据
+
     /**
-     * 添加度假套餐模块
+     * 刷新度假套餐模块
      */
-    private void addHolidaySetMeal() {
-        int itemHeight = 170;
+    private void refreshHolidaySetMeal() {
+        int itemHeight = RxImageTool.dp2px(170);
         int maxShowNumber = 3;
-        int divideSpace = 10;
-        List<SimpleString> dataList = MakeDataUtil.makeSimpleString(5, "度假套餐");
-        int size = dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber;
+        int divideSpace = RxImageTool.dp2px(10);
+        mDataHolidaySetMeal = MakeDataUtil.makeSimpleString(5, "度假套餐");
 
-        View view = View.inflate(this, R.layout.home_holiday_set_meal, null);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_home_holiday_set_meal);
-        ViewUtil.setHeight(recyclerView, itemHeight * size + divideSpace * (size - 1));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new HomeHolidaySetMealAdapter(dataList, itemHeight, maxShowNumber));
-        recyclerView.addItemDecoration(new SimpleItemDecoration(divideSpace, Color.TRANSPARENT));
+        if (mViewHolidaySetMeal == null) {
+            mViewHolidaySetMeal = View.inflate(this, R.layout.home_holiday_set_meal, null);
+            llContent.addView(mViewHolidaySetMeal);
 
-        llContent.addView(view);
+            // 查看更多
+            TextView tvMore = mViewHolidaySetMeal.findViewById(R.id.tv_home_holiday_set_meal_more);
+            tvMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            // 热门度假列表
+            RecyclerView recyclerView = mViewHolidaySetMeal.findViewById(R.id.recycler_view_home_holiday_set_meal);
+            mAdapterHolidaySetMeal = new AdapterRecycler<SimpleString>(R.layout.item_home_holiday_set_meal, mDataHolidaySetMeal,
+                    new AdapterRecycler.Builder().setItemHeight(itemHeight).setMaxShowCount(maxShowNumber)) {
+                @Override
+                public void convert(ViewHolderRecycler holder, SimpleString simpleString, int position) {
+                    holder.setText(R.id.tv_item_home_holiday_set_meal_name, simpleString.getName());
+                }
+            };
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+                @Override
+                public boolean canScrollVertically() {
+                    return false;
+                }
+            };
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(mAdapterHolidaySetMeal);
+            recyclerView.addItemDecoration(new CommonDecoration(divideSpace));
+            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
+        } else {
+            mAdapterHolidaySetMeal.notifyDataSetChanged();
+            RecyclerView recyclerView = mViewHolidaySetMeal.findViewById(R.id.recycler_view_home_holiday_set_meal);
+            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
+        }
     }
 
     /**

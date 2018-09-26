@@ -22,4 +22,16 @@ public class ViewUtil {
         layoutParams.height = px;
         view.setLayoutParams(layoutParams);
     }
+
+    public static void setHeightPx(View view, int itemHeight, int divideSpace, int count) {
+        setHeightPx(view, itemHeight, divideSpace, count, 1);
+    }
+
+    public static void setHeightPx(View view, int itemHeight, int divideSpace, int count, int lineCount) {
+        int row = (count + lineCount - 1) / lineCount;
+        int divideCount = row - 1 > 0 ? row - 1 : 0;
+        setHeightPx(view, itemHeight * row + divideSpace * divideCount);
+    }
+
+
 }

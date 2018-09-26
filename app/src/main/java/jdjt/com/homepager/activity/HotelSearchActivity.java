@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vondear.rxtool.RxDataTool;
-import com.vondear.rxtool.view.RxToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +27,8 @@ import co.lujun.androidtagview.TagView;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.SimpleItemDecoration;
 import jdjt.com.homepager.view.ClearEditText;
-import jdjt.com.homepager.view.commonRecyclerView.CommonAdapterRecycler;
-import jdjt.com.homepager.view.commonRecyclerView.CommonViewHolderRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 /**
  * Created by xxd on 2018/9/18.
@@ -46,7 +45,7 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
 
 
     private RecyclerView recycler_pop_hotel_search;
-    private CommonAdapterRecycler<String> mAdapter;
+    private AdapterRecycler<String> mAdapter;
     private List<String> dataList;
 
     @Override
@@ -156,9 +155,9 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
         if (recycler_pop_hotel_search.getVisibility() == View.GONE)
             recycler_pop_hotel_search.setVisibility(View.VISIBLE);
         if (mAdapter == null) {
-            mAdapter = new CommonAdapterRecycler<String>(this, R.layout.item_common_text, dataList) {
+            mAdapter = new AdapterRecycler<String>(R.layout.item_common_text, dataList) {
                 @Override
-                public void convert(CommonViewHolderRecycler holder, final String s, int position) {
+                public void convert(ViewHolderRecycler holder, final String s, int position) {
                     holder.setText(R.id.tv_item_common_text, s);
                     holder.setOnClickListener(R.id.tv_item_common_text, new View.OnClickListener() {
                         @Override

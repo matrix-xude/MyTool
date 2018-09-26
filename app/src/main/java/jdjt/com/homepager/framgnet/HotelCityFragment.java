@@ -24,9 +24,9 @@ import jdjt.com.homepager.domain.PinyinItem;
 import jdjt.com.homepager.util.PinYinUtil;
 import jdjt.com.homepager.util.ViewUtil;
 import jdjt.com.homepager.view.PinYinSideBar;
-import jdjt.com.homepager.view.commonRecyclerView.CommonAdapterMultiple;
-import jdjt.com.homepager.view.commonRecyclerView.CommonAdapterRecycler;
-import jdjt.com.homepager.view.commonRecyclerView.CommonViewHolderRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterMultipleRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.MultipleTypeSupport;
 
 /**
@@ -85,7 +85,7 @@ public class HotelCityFragment extends BaseFragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recycler_fragment_hotel_city.setLayoutManager(linearLayoutManager);
-        recycler_fragment_hotel_city.setAdapter(new CommonAdapterMultiple<PinyinItem>(getActivity(), dataList, new MultipleTypeSupport<PinyinItem>() {
+        recycler_fragment_hotel_city.setAdapter(new AdapterMultipleRecycler<PinyinItem>(dataList, new MultipleTypeSupport<PinyinItem>() {
             @Override
             public int getLayoutId(int itemType) {
                 if (itemType == 0)
@@ -100,22 +100,25 @@ public class HotelCityFragment extends BaseFragment {
             }
         }) {
             @Override
-            public void convert(CommonViewHolderRecycler holder, PinyinItem pinyinItem, int position) {
+            public void convert(ViewHolderRecycler holder, PinyinItem pinyinItem, int position) {
                 if (pinyinItem.getType() == 0) {
                     holder.setText(R.id.tv_item_pinyin, pinyinItem.getName());
                 } else {
                     int lineCount = 4;
-                    float itemHeight = 28;
+                    int maxShowCount = 12;
+                    int itemHeight = RxImageTool.dp2px(28);
+                    int divide = RxImageTool.dp2px(5);
                     RecyclerView recyclerView = holder.getView(R.id.recycler_item_hot_city);
                     GridLayoutManager manager = new GridLayoutManager(getActivity(), lineCount, GridLayoutManager.VERTICAL, false);
                     recyclerView.setLayoutManager(manager);
                     HotCityItem hotCityItem = (HotCityItem) pinyinItem.getObject();
                     List<String> list = hotCityItem.getList();
-                    ViewUtil.setHeightPx(recyclerView, (list.size() + lineCount - 1) / lineCount * RxImageTool.dp2px(itemHeight)
-                            + 10 * 1);
-                    recyclerView.setAdapter(new CommonAdapterRecycler<String>(getActivity(), R.layout.item_city, list, itemHeight) {
+                    int size = list.size() < maxShowCount ? list.size() : maxShowCount;
+                    ViewUtil.setHeightPx(recyclerView, itemHeight, divide, size, lineCount);
+                    recyclerView.setAdapter(new AdapterRecycler<String>(R.layout.item_city, list,
+                            new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
                         @Override
-                        public void convert(CommonViewHolderRecycler holder, String string, int position) {
+                        public void convert(ViewHolderRecycler holder, String string, int position) {
                             holder.setText(R.id.tv_item_city, string);
                         }
                     });

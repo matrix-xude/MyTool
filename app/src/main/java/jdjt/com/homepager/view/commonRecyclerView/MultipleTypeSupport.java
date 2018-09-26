@@ -6,6 +6,7 @@ package jdjt.com.homepager.view.commonRecyclerView;
  */
 
 public interface MultipleTypeSupport<T> {
+
     int getLayoutId(int itemType);
 
     int getItemViewType(int position, T t);

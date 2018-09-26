@@ -1,72 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_item_home_holiday_set_meal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/rl_item_home_holiday_set_meal"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_home_holiday_set_meal_default"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg_home_holiday_set_meal_default"/>
+    <TextView
+        android:id="@+id/tv_item_home_holiday_set_meal_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="6dp"
+        android:textColor="@color/white"
+        android:textSize="13.44sp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="【三亚湾红树林】木槿酒店城市景观房+水乐园+BBQ"
-            android:textColor="@color/white"
-            android:textSize="13.44sp"/>
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        app:cardCornerRadius="3dp">
 
-        <TextView
-            android:id="@+id/tv_item_home_holiday_set_meal_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="14sp"/>
-
-        <android.support.v7.widget.CardView
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="3dp">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_item_home_holiday_set_meal_price"
+                android:layout_width="58.55dp"
+                android:layout_height="24dp"
+                android:background="#F39800"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="14.4sp"/>
 
-                <TextView
-                    android:id="@+id/tv_item_home_holiday_set_meal_price"
-                    android:layout_width="58.55dp"
-                    android:layout_height="24dp"
-                    android:background="#F39800"
-                    android:gravity="center"
-                    android:text="¥900"
-                    android:textSize="14.4sp"
-                    android:textColor="@color/white"/>
-
-                <TextView
-                    android:id="@+id/tv_item_home_holiday_set_meal_save"
-                    android:layout_below="@id/tv_item_home_holiday_set_meal_price"
-                    android:layout_width="58.55dp"
-                    android:layout_height="24dp"
-                    android:textSize="11.52sp"
-                    android:background="#666666"
-                    android:gravity="center"
-                    android:text="已省¥300"
-                    android:textColor="@color/white"/>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
-    </RelativeLayout>
-
-</FrameLayout>
+            <TextView
+                android:id="@+id/tv_item_home_holiday_set_meal_save"
+                android:layout_width="58.55dp"
+                android:layout_height="24dp"
+                android:layout_below="@id/tv_item_home_holiday_set_meal_price"
+                android:background="#666666"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="11.52sp"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
