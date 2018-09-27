@@ -23,3 +23,15 @@
 -keepclasseswithmembers class * {
     public <init>(android.content.Context);
 }
+
+#继承activity,application,service,broadcastReceiver,contentprovider....不进行混淆
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.support.multidex.MultiDexApplication
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.view.View
+-keep class android.support.** {*;}## 保留support下的所有类及其内部类
