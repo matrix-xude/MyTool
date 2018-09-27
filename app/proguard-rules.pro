@@ -20,10 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepclasseswithmembers class * {
-    public <init>(android.content.Context);
-}
-
 #继承activity,application,service,broadcastReceiver,contentprovider....不进行混淆
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -35,3 +31,6 @@
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
 -keep class android.support.** {*;}## 保留support下的所有类及其内部类
+
+# 屏蔽警告
+-ignorewarnings
