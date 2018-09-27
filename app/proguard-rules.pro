@@ -20,7 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# 日历控制
 -keepclasseswithmembers class * {
     public <init>(android.content.Context);
 }
