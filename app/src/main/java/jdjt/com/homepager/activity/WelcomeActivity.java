@@ -24,6 +24,8 @@ public class WelcomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         List<String> list = RxPermissionsTool.with(this)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .addPermission(Manifest.permission.INTERNET)
+                .addPermission(Manifest.permission.CHANGE_WIFI_STATE)
                 .initPermission();
         if (RxDataTool.isEmpty(list))
             goNext();

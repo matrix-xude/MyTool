@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="jdjt.com.homepager">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".application.MyApplication"
         android:allowBackup="true"
@@ -19,12 +24,20 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.HomeActivity"/>
-        <activity android:name=".activity.HotelSecondActivity"/>
-        <activity android:name=".activity.HotelSearchActivity"
-                  android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".activity.HotelDestinationActivity"
-                  android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".activity.HomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.HotelSecondActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.HotelSearchActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".activity.HotelDestinationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 
 </manifest>
