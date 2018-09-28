@@ -1,27 +1,72 @@
 package jdjt.com.homepager.http;
 
+import jdjt.com.homepager.domain.back.BackBaseList;
+import jdjt.com.homepager.domain.back.BackHeadIamge;
+import jdjt.com.homepager.domain.back.BackHotActivity;
+import jdjt.com.homepager.domain.back.BackHotRecommend;
+import jdjt.com.homepager.domain.back.BackNavigation;
+import jdjt.com.homepager.domain.back.BackVacation;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
-/**
- * Created by xxd on 2017/8/7.
- * <p>
- * 此类中的接口必须是按照文档定义的接口模式，在head中添加必要的参数
- * 因为返回需要根据head中的mymhotel-status字段接收不同的bean，所以需要用到RxJava的异常处理机制
- */
 
 public interface ServiceGson {
 
+    /**
+     * 首页热门推荐
+     *
+     * @return
+     */
+    @GET("api/api/v2/recommend/hotrecommend")
+    Call<BackBaseList<BackHotRecommend>> getHomePagerHotRecommend();
 
     /**
-     * 入住客人根据任务号获取聊天信息
+     * 所有热门推荐，目的地页面使用
      *
      * @param body
      * @return
      */
-    @POST("ghost-service/customer/getMessageByTaskCode.json")
-    Call<String> getChatMessageByCode(@Body RequestBody body);
+    @POST("api/api/v2/recommend/lookMore")
+    Call<BackBaseList<BackHotRecommend>> getHotRecommendAll(@Body RequestBody body);
+
+    /**
+     * 首页热门活动
+     *
+     * @param id
+     * @return
+     */
+    @GET("api/api/v1/m/banner/hotList/{type_id}")
+    Call<BackBaseList<BackHotActivity>> getHomePagerHotActivity(@Path("type_id") String id);
+
+    /**
+     * 首页最下面的度假套餐、酒店等
+     *
+     * @return
+     */
+    @GET("api/api/v1/index/recommends")
+    Call<BackBaseList<BackVacation>> getHomePagerVacation();
+
+    /**
+     * 首页最上面的导航模块
+     *
+     * @param id
+     * @return
+     */
+    @GET("api/api/v1/index/navigation/{type_id}")
+    Call<BackBaseList<BackNavigation>> getHomePagerNavigation(@Path("type_id") String id);
+
+    /**
+     * 所有顶部轮播图
+     *
+     * @param id
+     * @return
+     */
+    @GET("api/api/v1/m/banner/list/{type_id}")
+    Call<BackBaseList<BackHeadIamge>> getHeadImage(@Path("type_id") String id);
+
 
 }

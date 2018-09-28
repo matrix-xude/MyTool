@@ -24,9 +24,16 @@ import com.vondear.rxtool.RxImageTool;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.adapter.HomeModuleAdapter;
 import jdjt.com.homepager.adapter.VerticalBannerAdapter;
@@ -35,8 +42,11 @@ import jdjt.com.homepager.decoration.HomeModuleDecoration;
 import jdjt.com.homepager.domain.HomeFirstModuleBean;
 import jdjt.com.homepager.domain.HomeFirstModuleItemBean;
 import jdjt.com.homepager.domain.SimpleString;
+import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.framgnet.HotRecommendFragment;
+import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.MakeDataUtil;
+import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.util.ViewUtil;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
@@ -216,6 +226,36 @@ public class HomeActivity extends BaseActivity {
      * 添加热门推荐模块
      */
     private void addHotRecommend() {
+
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackHotRecommend>>() {
+                    @Override
+                    public List<BackHotRecommend> apply(Integer integer) throws Exception {
+                        RequestHelperHomePager.getInstance().requestHeadImage("4");
+                        return RequestHelperHomePager.getInstance().requestHotRecommend();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+//                        showProDialo();
+                    }
+                })
+                .subscribe(new Consumer<List<BackHotRecommend>>() {
+                    @Override
+                    public void accept(List<BackHotRecommend> backHotRecommendList) throws Exception {
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+//                        dismissProDialog();
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
+
+
 
         int heightFirstRow = 73;  // 第一行item高度
         int heightOtherRow = 38;  // 其他行item高度
