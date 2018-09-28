@@ -1,7 +1,7 @@
 package jdjt.com.homepager.http;
 
 import jdjt.com.homepager.domain.back.BackBaseList;
-import jdjt.com.homepager.domain.back.BackHeadIamge;
+import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackNavigation;
@@ -66,7 +66,7 @@ public interface ServiceGson {
      * @return
      */
     @GET("api/api/v1/m/banner/list/{type_id}")
-    Call<BackBaseList<BackHeadIamge>> getHeadImage(@Path("type_id") String id);
+    Call<BackBaseList<BackHeadImage>> getHeadImage(@Path("type_id") String id);
 
 
 }

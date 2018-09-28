@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import jdjt.com.homepager.domain.back.BackBaseList;
-import jdjt.com.homepager.domain.back.BackHeadIamge;
+import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackNavigation;
@@ -146,11 +146,11 @@ public class RequestHelperHomePager {
      * @throws IOException
      * @throws CodeException
      */
-    public List<BackHeadIamge> requestHeadImage(String type) throws IOException, CodeException {
+    public List<BackHeadImage> requestHeadImage(String type) throws IOException, CodeException {
 
-        Call<BackBaseList<BackHeadIamge>> call = RetrofitAssistant.getNewGsonService().getHeadImage(type);
-        Response<BackBaseList<BackHeadIamge>> response = call.execute();
-        BackBaseList<BackHeadIamge> body = response.body();
+        Call<BackBaseList<BackHeadImage>> call = RetrofitAssistant.getNewGsonService().getHeadImage(type);
+        Response<BackBaseList<BackHeadImage>> response = call.execute();
+        BackBaseList<BackHeadImage> body = response.body();
         if (body == null)
             throw new CodeException("返回body为null");
         if (!RetrofitAssistant.SUCCEED_CODE.equals(body.getCode()))

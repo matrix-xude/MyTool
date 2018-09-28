@@ -6,7 +6,7 @@ package jdjt.com.homepager.domain.back;
  * 2:酒店首页;3:度假套餐首页;4:MVM首页;5旅游首页;6:猫超市首页
  */
 
-public class BackHeadIamge {
+public class BackHeadImage {
 
     private String imageUrl; //图片地址
     private String linkUrl; //链接地址

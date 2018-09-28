@@ -32,7 +32,7 @@ import jdjt.com.homepager.adapter.HotelSecondClassifyAdapter;
 import jdjt.com.homepager.decoration.SimpleItemDecoration;
 import jdjt.com.homepager.domain.SimpleString;
 import jdjt.com.homepager.util.MakeDataUtil;
-import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
 import jdjt.com.homepager.view.verticalCalendar.CalendarData;
 import jdjt.com.homepager.view.verticalCalendar.CalendarUtil;
@@ -108,7 +108,7 @@ public class HotelSecondActivity extends BaseActivity {
         TextView tvMore = view.findViewById(R.id.tv_home_holiday_hotel_more);
         tvMore.setVisibility(View.GONE);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_home_view_holiday_hotel);
-        ViewUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
+        LayoutParamsUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
@@ -132,7 +132,7 @@ public class HotelSecondActivity extends BaseActivity {
 
         View view = View.inflate(this, R.layout.hotel_second_classify, null);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_hotel_second_classify);
-        ViewUtil.setHeight(recyclerView, itemHeight * (maxShowNumber / spanCount + 1)); // 需要多一个全部
+        LayoutParamsUtil.setHeight(recyclerView, itemHeight * (maxShowNumber / spanCount + 1)); // 需要多一个全部
         // 设置item
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), spanCount, GridLayoutManager.VERTICAL, false) {
             @Override

@@ -9,7 +9,7 @@ import com.vondear.rxtool.RxImageTool;
  * Created by xxd on 2018/9/7.
  */
 
-public class ViewUtil {
+public class LayoutParamsUtil {
 
     public static void setHeight(View view, float dp) {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
@@ -33,5 +33,21 @@ public class ViewUtil {
         setHeightPx(view, itemHeight * row + divideSpace * divideCount);
     }
 
+    /**
+     * 设置view的margin属性
+     * @param v
+     * @param l
+     * @param t
+     * @param r
+     * @param b
+     */
+    public static void setMargins(View v, int l, int t, int r, int b) {
+        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            p.setMargins(l, t, r, b);
+//            v.requestLayout();
+            v.setLayoutParams(p);
+        }
+    }
 
 }

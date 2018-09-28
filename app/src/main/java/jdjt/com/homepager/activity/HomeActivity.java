@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.flyco.tablayout.SlidingTabLayout;
@@ -22,6 +23,7 @@ import com.taobao.library.VerticalBannerView;
 import com.vondear.rxtool.RxDeviceTool;
 import com.vondear.rxtool.RxImageTool;
 import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
 import org.reactivestreams.Subscription;
@@ -42,40 +44,52 @@ import jdjt.com.homepager.decoration.HomeModuleDecoration;
 import jdjt.com.homepager.domain.HomeFirstModuleBean;
 import jdjt.com.homepager.domain.HomeFirstModuleItemBean;
 import jdjt.com.homepager.domain.SimpleString;
+import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.framgnet.HotRecommendFragment;
 import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.MakeDataUtil;
+import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.util.ToastUtil;
-import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 /**
  * Created by xxd on 2018/9/5.
+ * 改版的首页
  */
 
 public class HomeActivity extends BaseActivity {
 
-    private Banner banner;
     private LinearLayout llContent;
+
+    private RelativeLayout rl_home_head_all; // 头部，包含状态栏部分
+    private LinearLayout ll_home_head; // 头部，不包含状态栏部分
+    private Banner banner_home_head;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtil.fitSystemWindow(this);
         setContentView(R.layout.activity_home);
         initView();
         initData();
     }
 
     private void initView() {
-        banner = findViewById(R.id.banner);
-        llContent = findViewById(R.id.ll_home_content);
+        rl_home_head_all = findViewById(R.id.rl_home_head_all);
+        ll_home_head = findViewById(R.id.ll_home_head);
+        // 留出导航栏高度
+        LayoutParamsUtil.setMargins(ll_home_head, 0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+
+        banner_home_head = findViewById(R.id.banner_home_head);
+//        llContent = findViewById(R.id.ll_home_content);
     }
 
     private void initData() {
-        initBanner();
-        initNestScrollView();
+        requestHeadBanner();
+//        initNestScrollView();
     }
 
     // 初始化
@@ -132,11 +146,11 @@ public class HomeActivity extends BaseActivity {
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(mAdapterHolidayHotel);
             recyclerView.addItemDecoration(new CommonDecoration(divideSpace, 1, Color.parseColor("#3E3F41")));
-            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
+            LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
         } else {
             mAdapterHolidayHotel.notifyDataSetChanged();
             RecyclerView recyclerView = mViewHolidayHotel.findViewById(R.id.recycler_home_view_holiday_hotel);
-            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
+            LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidayHotel.getItemCount());
         }
     }
 
@@ -184,11 +198,11 @@ public class HomeActivity extends BaseActivity {
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(mAdapterHolidaySetMeal);
             recyclerView.addItemDecoration(new CommonDecoration(divideSpace));
-            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
+            LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
         } else {
             mAdapterHolidaySetMeal.notifyDataSetChanged();
             RecyclerView recyclerView = mViewHolidaySetMeal.findViewById(R.id.recycler_view_home_holiday_set_meal);
-            ViewUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
+            LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divideSpace, mAdapterHolidaySetMeal.getItemCount());
         }
     }
 
@@ -256,7 +270,6 @@ public class HomeActivity extends BaseActivity {
                 });
 
 
-
         int heightFirstRow = 73;  // 第一行item高度
         int heightOtherRow = 38;  // 其他行item高度
         int divideSpace = 8; // 间隔
@@ -267,7 +280,7 @@ public class HomeActivity extends BaseActivity {
                 - slidingTabLayout.getPaddingStart() - slidingTabLayout.getPaddingEnd()) / 3);
         ViewPager viewPager = view.findViewById(R.id.vp_home_hot_recommend);
         // 设置高度
-        ViewUtil.setHeight(viewPager, heightFirstRow + heightOtherRow * 2 + divideSpace * 2);
+        LayoutParamsUtil.setHeight(viewPager, heightFirstRow + heightOtherRow * 2 + divideSpace * 2);
         TextView tvMore = view.findViewById(R.id.tv_home_hot_recommend_more);
         String[] titles = new String[]{"热门目的地", "热门度假区", "大家都爱去"};
         ArrayList<Fragment> list = new ArrayList<>();
@@ -316,7 +329,7 @@ public class HomeActivity extends BaseActivity {
         // 设置高度
         RelativeLayout rlBg = moduleView.findViewById(R.id.rl_home_module_first);
         int row = (dataList.size() - 1) / spanCount + 1; // 总共有几行
-        ViewUtil.setHeight(rlBg, itemHeight * row + divideSpace * (row - 1));
+        LayoutParamsUtil.setHeight(rlBg, itemHeight * row + divideSpace * (row - 1));
 
         // 设置背景
         final int type = module.getType();
@@ -362,18 +375,24 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    // 初始化自动滑动的头图
-    private void initBanner() {
-        List<Integer> list = new ArrayList<>();
-        list.add(R.drawable.bg1);
-        list.add(R.drawable.bg2);
-        list.add(R.drawable.bg3);
-        list.add(R.drawable.bg4);
-        list.add(R.drawable.bg5);
+    // 刷新头图
+    private void refreshHeadBanner(final List<BackHeadImage> list) {
+//        List<Integer> list = new ArrayList<>();
+//        list.add(R.drawable.bg1);
+//        list.add(R.drawable.bg2);
+//        list.add(R.drawable.bg3);
+//        list.add(R.drawable.bg4);
+//        list.add(R.drawable.bg5);
         MyImageLoader imageLoader = new MyImageLoader();
 
-        banner.setImages(list)
+        banner_home_head.setImages(list)
                 .setImageLoader(imageLoader)
+                .setOnBannerListener(new OnBannerListener() {
+                    @Override
+                    public void OnBannerClick(int position) {
+                        ToastUtil.showToast(getApplicationContext(), list.get(position).getTitle() + "");
+                    }
+                })
                 .start();
     }
 
@@ -381,8 +400,36 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            Integer id = (Integer) path;
-            Glide.with(getApplicationContext()).load(id).into(imageView);
+            BackHeadImage backHeadImage = (BackHeadImage) path;
+            Glide.with(getApplicationContext()).load(backHeadImage.getImageUrl()).into(imageView);
         }
+    }
+
+    private void requestHeadBanner() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackHeadImage>>() {
+                    @Override
+                    public List<BackHeadImage> apply(Integer integer) throws Exception {
+                        return RequestHelperHomePager.getInstance().requestHeadImage("4");
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackHeadImage>>() {
+                    @Override
+                    public void accept(List<BackHeadImage> backHeadImageList) throws Exception {
+                        refreshHeadBanner(backHeadImageList);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
     }
 }

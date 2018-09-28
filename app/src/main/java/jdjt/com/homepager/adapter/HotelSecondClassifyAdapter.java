@@ -15,7 +15,7 @@ import java.util.List;
 
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.domain.SimpleString;
-import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 
 /**
  * Created by xxd on 2018/9/5.
@@ -39,7 +39,7 @@ public class HotelSecondClassifyAdapter extends RecyclerView.Adapter<HotelSecond
         View v = View.inflate(parent.getContext(), R.layout.item_hotel_second_classify, null);
         ClassifyViewHolder holder = new ClassifyViewHolder(v);
         // 替换每个条目的高度
-        ViewUtil.setHeight(holder.rlItem, itemHeight);
+        LayoutParamsUtil.setHeight(holder.rlItem, itemHeight);
         return holder;
     }
 

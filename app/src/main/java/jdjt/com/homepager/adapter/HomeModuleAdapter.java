@@ -12,7 +12,7 @@ import java.util.List;
 
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.domain.HomeFirstModuleItemBean;
-import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 
 /**
  * Created by xxd on 2018/9/5.
@@ -34,7 +34,7 @@ public class HomeModuleAdapter extends RecyclerView.Adapter<HomeModuleAdapter.Ho
         View v = View.inflate(parent.getContext(), R.layout.item_home_module, null);
         HomeModuleViewHolder holder = new HomeModuleViewHolder(v);
         // 替换每个条目的高度
-        ViewUtil.setHeight(holder.tvName, itemHeight);
+        LayoutParamsUtil.setHeight(holder.tvName, itemHeight);
         return holder;
     }
 

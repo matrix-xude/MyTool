@@ -22,7 +22,7 @@ import jdjt.com.homepager.decoration.PinYinDecoration;
 import jdjt.com.homepager.domain.HotCityItem;
 import jdjt.com.homepager.domain.PinyinItem;
 import jdjt.com.homepager.util.PinYinUtil;
-import jdjt.com.homepager.util.ViewUtil;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.view.PinYinSideBar;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterMultipleRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
@@ -114,7 +114,7 @@ public class HotelCityFragment extends BaseFragment {
                     HotCityItem hotCityItem = (HotCityItem) pinyinItem.getObject();
                     List<String> list = hotCityItem.getList();
                     int size = list.size() < maxShowCount ? list.size() : maxShowCount;
-                    ViewUtil.setHeightPx(recyclerView, itemHeight, divide, size, lineCount);
+                    LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divide, size, lineCount);
                     recyclerView.setAdapter(new AdapterRecycler<String>(R.layout.item_city, list,
                             new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
                         @Override
