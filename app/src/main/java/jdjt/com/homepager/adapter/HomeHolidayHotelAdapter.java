@@ -58,7 +58,7 @@ public class HomeHolidayHotelAdapter extends RecyclerView.Adapter<HomeHolidayHot
 
         public MealViewHolder(View v) {
             super(v);
-            rlItem = v.findViewById(R.id.rl_item_home_hotel);
+//            rlItem = v.findViewById(R.id.rl_item_home_hotel);
             tvName = v.findViewById(R.id.tv_item_hotel_name);
         }
     }

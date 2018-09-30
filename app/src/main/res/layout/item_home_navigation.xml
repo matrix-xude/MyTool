@@ -6,9 +6,9 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/tv_item_common_text"
+        android:id="@+id/tv_item_home_navigation"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="16.32sp"/>

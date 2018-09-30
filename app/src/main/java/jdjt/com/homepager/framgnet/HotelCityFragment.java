@@ -50,8 +50,8 @@ public class HotelCityFragment extends BaseFragment {
     }
 
     @Override
-    protected void init(View view, Bundle savedInstanceState) {
-        super.init(view, savedInstanceState);
+    protected void init(Bundle savedInstanceState) {
+        super.init(savedInstanceState);
         initView();
         initData();
     }

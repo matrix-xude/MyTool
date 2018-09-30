@@ -33,6 +33,7 @@ public class LayoutParamsUtil {
         setHeightPx(view, itemHeight * row + divideSpace * divideCount);
     }
 
+
     /**
      * 设置view的margin属性
      * @param v

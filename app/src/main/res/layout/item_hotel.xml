@@ -1,107 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view_item_hotel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        app:cardCornerRadius="5dp">
+
+        <ImageView
+            android:id="@+id/iv_item_hotel_icon"
+            android:layout_width="111.35dp"
+            android:layout_height="111.35dp"
+            android:src="@drawable/bg_hotel_default"/>
+    </android.support.v7.widget.CardView>
+
     <RelativeLayout
-        android:id="@+id/rl_item_home_hotel"
         android:layout_width="match_parent"
-        android:layout_height="130dp">
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/card_view_item_hotel"
+        android:layout_alignTop="@id/card_view_item_hotel"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card_view_item_hotel">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view_item_hotel"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_item_hotel_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            app:cardCornerRadius="5dp">
-
-            <ImageView
-                android:id="@+id/iv_item_hotel_icon"
-                android:layout_width="111.35dp"
-                android:layout_height="111.35dp"
-                android:src="@drawable/bg_hotel_default"/>
-        </android.support.v7.widget.CardView>
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="14.4sp"/>
 
         <RelativeLayout
-            android:layout_alignTop="@id/card_view_item_hotel"
-            android:layout_alignBottom="@id/card_view_item_hotel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/card_view_item_hotel">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_item_hotel_name"
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:id="@+id/iv_item_hotel_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:layout_marginTop="3dp"
+                android:src="@drawable/icon_hotel_address_decoration"/>
 
             <TextView
-                android:id="@+id/tv_item_hotel_name"
+                android:id="@+id/tv_item_hotel_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/iv_item_hotel_location"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/white"
-                android:textSize="14.4sp"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_item_hotel_name"
-                android:layout_marginTop="5dp">
-
-                <ImageView
-                    android:id="@+id/iv_item_hotel_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginTop="3dp"
-                    android:src="@drawable/icon_hotel_address_decoration"/>
-
-                <TextView
-                    android:id="@+id/tv_item_hotel_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/iv_item_hotel_location"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="辽宁省大连市黄岛区滨海大道永安里社区35号"
-                    android:textColor="#D2D2D3"
-                    android:textSize="12.48sp"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
-
-                <TextView
-                    android:id="@+id/tv_item_hotel_grade"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4.9分"
-                    android:textColor="#F5A623"
-                    android:textSize="14.4sp"/>
-
-                <TextView
-                    android:id="@+id/tv_item_hotel_people"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/tv_item_hotel_grade"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/tv_item_hotel_grade"
-                    android:text="130人出游"
-                    android:textColor="#D2D2D3"
-                    android:textSize="11.52sp"/>
-
-                <TextView
-                    android:id="@+id/tv_item_hotel_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="¥780.23起"
-                    android:textColor="#F37400 "
-                    android:textSize="14.4sp"/>
-            </RelativeLayout>
+                android:textColor="#D2D2D3"
+                android:textSize="12.48sp"/>
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/tv_item_hotel_grade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#F5A623"
+                android:textSize="14.4sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/tv_item_hotel_grade"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/tv_item_hotel_grade"
+                android:textColor="#D2D2D3"
+                android:textSize="11.52sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textColor="#F37400 "
+                android:textSize="14.4sp"/>
+        </RelativeLayout>
     </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>

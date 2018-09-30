@@ -31,11 +31,11 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view, savedInstanceState);
+        init(savedInstanceState);
     }
 
     public abstract int getLayoutId();
 
-    protected void init(View view, Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
     }
 }

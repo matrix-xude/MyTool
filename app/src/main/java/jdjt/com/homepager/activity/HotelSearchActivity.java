@@ -158,8 +158,8 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
             mAdapter = new AdapterRecycler<String>(R.layout.item_common_text, dataList) {
                 @Override
                 public void convert(ViewHolderRecycler holder, final String s, int position) {
-                    holder.setText(R.id.tv_item_common_text, s);
-                    holder.setOnClickListener(R.id.tv_item_common_text, new View.OnClickListener() {
+                    holder.setText(R.id.tv_item_home_navigation, s);
+                    holder.setOnClickListener(R.id.tv_item_home_navigation, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             backToPreviousActivity(s);

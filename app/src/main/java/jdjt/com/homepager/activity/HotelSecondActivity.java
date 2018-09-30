@@ -96,30 +96,30 @@ public class HotelSecondActivity extends BaseActivity {
      * 添加猜你喜欢模块
      */
     private void addHolidayHotel() {
-        int itemHeight = 132;
-        int maxShowNumber = 10;
-        int divideSpace = 1;
-        List<SimpleString> dataList = MakeDataUtil.makeSimpleString(12, "度假酒店");
-        int size = dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber;
-
-        View view = View.inflate(this, R.layout.home_holiday_hotel, null);
-        TextView tvTitle = view.findViewById(R.id.tv_home_holiday_hotel_title);
-        tvTitle.setText("猜你喜欢");
-        TextView tvMore = view.findViewById(R.id.tv_home_holiday_hotel_more);
-        tvMore.setVisibility(View.GONE);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_home_view_holiday_hotel);
-        LayoutParamsUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new HomeHolidayHotelAdapter(dataList, itemHeight, maxShowNumber));
-        recyclerView.addItemDecoration(new SimpleItemDecoration(divideSpace, Color.parseColor("#3E3F41")));
-
-        llContent.addView(view);
+//        int itemHeight = 132;
+//        int maxShowNumber = 10;
+//        int divideSpace = 1;
+//        List<SimpleString> dataList = MakeDataUtil.makeSimpleString(12, "度假酒店");
+//        int size = dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber;
+//
+//        View view = View.inflate(this, R.layout.home_vacation, null);
+//        TextView tvTitle = view.findViewById(R.id.tv_home_holiday_hotel_title);
+//        tvTitle.setText("猜你喜欢");
+//        TextView tvMore = view.findViewById(R.id.tv_home_holiday_hotel_more);
+//        tvMore.setVisibility(View.GONE);
+//        RecyclerView recyclerView = view.findViewById(R.id.recycler_home_view_holiday_hotel);
+//        LayoutParamsUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
+//            @Override
+//            public boolean canScrollVertically() {
+//                return false;
+//            }
+//        };
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.setAdapter(new HomeHolidayHotelAdapter(dataList, itemHeight, maxShowNumber));
+//        recyclerView.addItemDecoration(new SimpleItemDecoration(divideSpace, Color.parseColor("#3E3F41")));
+//
+//        llContent.addView(view);
     }
 
     /**
