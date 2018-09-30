@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,6 +71,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private RelativeLayout rl_home_head_all; // 头部，包含状态栏部分
     private LinearLayout ll_home_head; // 头部，不包含状态栏部分
+    private ImageView iv_home_head_scan; // 扫一扫
+    private TextView tv_home_head_search; // search
+    private ImageView iv_home_head_v_member; // V客会
+
+    private NestedScrollView nest_scroll_home;
+
     private Banner banner_home_head;  // 顶部轮播图
 
     private LinearLayout ll_home_navigation; // 导航状态，动态添加
@@ -86,6 +94,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout ll_home_vacation; // 底部度假
 
+
+    private final int mHeadDp = 40; // 头的高度，不包含导航栏
+    private final int mHeadBannerDp = 180; // 头图banner高度
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,11 +110,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private void initView() {
         rl_home_head_all = findViewById(R.id.rl_home_head_all);
+        LayoutParamsUtil.setHeightPx(rl_home_head_all, RxImageTool.dp2px(mHeadDp) + StatusBarUtil.getStatusBarHeight(this));
         ll_home_head = findViewById(R.id.ll_home_head);
         // 留出导航栏高度
         LayoutParamsUtil.setMargins(ll_home_head, 0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+        iv_home_head_scan = findViewById(R.id.iv_home_head_scan);
+        tv_home_head_search = findViewById(R.id.tv_home_head_search);
+        iv_home_head_v_member = findViewById(R.id.iv_home_head_v_member);
 
+        nest_scroll_home = findViewById(R.id.nest_scroll_home);
         banner_home_head = findViewById(R.id.banner_home_head);
+        LayoutParamsUtil.setHeight(banner_home_head, mHeadBannerDp);
         ll_home_navigation = findViewById(R.id.ll_home_navigation);
         vertical_banner_home = findViewById(R.id.vertical_banner_home);
         iv_home_house_car = findViewById(R.id.iv_home_house_car);
@@ -115,7 +134,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initData() {
+        rl_home_head_all.setOnClickListener(this); // 消耗点击事件
         iv_home_house_car.setOnClickListener(this);
+        iv_home_head_scan.setOnClickListener(this);
+        tv_home_head_search.setOnClickListener(this);
+        iv_home_head_v_member.setOnClickListener(this);
+
+        // 变化的值
+        final int distance = RxImageTool.dp2px(mHeadBannerDp - mHeadDp) - StatusBarUtil.getStatusBarHeight(this);
+        nest_scroll_home.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                float gap = (float) scrollY / distance;
+                if (gap > 1)
+                    gap = 1;
+                if (gap < 0)
+                    gap = 0;
+                rl_home_head_all.setAlpha(gap);
+            }
+        });
         requestHeadBanner();
         requestNavigation();
         requestHotRecommend();
@@ -127,8 +164,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.rl_home_head_all:
+                break;
             case R.id.iv_home_house_car:
                 RxToast.showToast("房车营地");
+                break;
+            case R.id.iv_home_head_scan:
+                RxToast.showToast("扫一扫");
+                break;
+            case R.id.tv_home_head_search:
+                RxToast.showToast("search");
+                break;
+            case R.id.iv_home_head_v_member:
+                RxToast.showToast("V客会");
                 break;
         }
     }
