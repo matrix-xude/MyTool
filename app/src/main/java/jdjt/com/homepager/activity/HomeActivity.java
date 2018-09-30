@@ -208,10 +208,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         // 查看更多的位置、点击事件
         TextView tvMore = null;
         if (type == 0) { // 度假套餐
-            tvMore = view.findViewById(R.id.tv_home_vacation_more_1);
+            tvMore = view.findViewById(R.id.tv_home_vacation_more_2);
             tvMore.setVisibility(View.VISIBLE);
         } else if (type == 1) { // 度假酒店
-            tvMore = view.findViewById(R.id.tv_home_vacation_more_2);
+            tvMore = view.findViewById(R.id.tv_home_vacation_more_1);
             tvMore.setVisibility(View.VISIBLE);
         }
         if (tvMore != null) {
