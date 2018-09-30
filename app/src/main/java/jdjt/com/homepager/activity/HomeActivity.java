@@ -241,7 +241,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             maxShowCount = 3;
             layoutId = R.layout.item_home_vacation_set_meal;
         } else if (type == 1) { // 度假酒店
-            itemHeight = RxImageTool.dp2px(132);
+//            itemHeight = RxImageTool.dp2px(132);
             divide = RxImageTool.dp2px(1);
             maxShowCount = 6;
             layoutId = R.layout.item_hotel;

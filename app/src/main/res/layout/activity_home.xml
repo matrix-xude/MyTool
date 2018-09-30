@@ -119,8 +119,6 @@
                     android:id="@+id/vp_home_hot_recommend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"/>
 
                 <TextView
@@ -128,8 +126,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
                     android:drawableEnd="@drawable/icon_arrow_right_gray"
                     android:drawablePadding="5dp"
                     android:padding="5dp"
