@@ -13,10 +13,10 @@
 
     <jdjt.com.homepager.view.PinYinSideBar
         android:id="@+id/pinyin_side_bar_fragment_hotel_city"
-        android:layout_width="wrap_content"
+        android:layout_width="20dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="10dp"/>
 
 </RelativeLayout>

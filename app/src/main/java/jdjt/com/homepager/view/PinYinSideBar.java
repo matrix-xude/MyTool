@@ -64,7 +64,7 @@ public class PinYinSideBar extends View {
         float textSize = typedArray.getDimension(R.styleable.PinYinSideBar_letterSize, RxImageTool.dp2px(11.52f));
         int letterColor = typedArray.getColor(R.styleable.PinYinSideBar_letterColor,
                 ContextCompat.getColor(getContext(), android.R.color.white));
-        mLetterSpacingExtra = typedArray.getFloat(R.styleable.PinYinSideBar_letterSpacingExtra, 1.4f);
+        mLetterSpacingExtra = typedArray.getFloat(R.styleable.PinYinSideBar_letterSpacingExtra, 1.3f);
         int focusLetterColor = typedArray.getColor(R.styleable.PinYinSideBar_focusLetterColor,
                 ContextCompat.getColor(getContext(), android.R.color.white));
         typedArray.recycle();

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -53,8 +54,8 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
     private RelativeLayout rlScenic;
 
     private HotelCityFragment cityFragment;
-    private HotelHolidayFragment holidayFragment;
-    private HotelScenicFragment scenicFragment;
+    private HotelCityFragment holidayFragment;
+    private HotelCityFragment scenicFragment;
 
     private int mCurrentTabIndex = -1; // 当前条目
     private AdapterRecycler<String> mAdapter;
@@ -146,6 +147,7 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
 
     // 切换fragment
     private void switchFragment(int position) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         switch (position) {
             case 0:
                 if (cityFragment == null) {
@@ -153,20 +155,41 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
                     Bundle bundle = new Bundle();
                     bundle.putString("type", "1");
                     cityFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().add(R.id.rl_hotel_destination_content, cityFragment).commit();
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.rl_hotel_destination_content, cityFragment).commit();
+                if (holidayFragment != null)
+                    ft.hide(holidayFragment);
+                if (scenicFragment != null)
+                    ft.hide(scenicFragment);
+                ft.show(cityFragment).commit();
                 break;
             case 1:
                 if (holidayFragment == null) {
-                    holidayFragment = new HotelHolidayFragment();
+                    holidayFragment = new HotelCityFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", "2");
+                    holidayFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().add(R.id.rl_hotel_destination_content, holidayFragment).commit();
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.rl_hotel_destination_content, holidayFragment).commit();
+                if (cityFragment != null)
+                    ft.hide(cityFragment);
+                if (scenicFragment != null)
+                    ft.hide(scenicFragment);
+                ft.show(holidayFragment).commit();
                 break;
             case 2:
                 if (scenicFragment == null) {
-                    scenicFragment = new HotelScenicFragment();
+                    scenicFragment = new HotelCityFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", "3");
+                    scenicFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().add(R.id.rl_hotel_destination_content, scenicFragment).commit();
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.rl_hotel_destination_content, scenicFragment).commit();
+                if (cityFragment != null)
+                    ft.hide(cityFragment);
+                if (holidayFragment != null)
+                    ft.hide(holidayFragment);
+                ft.show(scenicFragment).commit();
                 break;
         }
     }

@@ -169,7 +169,7 @@ public class HotelCityFragment extends BaseFragment {
             public void onTouchEnd(String s) {
             }
         });
-        pinyin_side_bar_fragment_hotel_city.invalidate();
+        pinyin_side_bar_fragment_hotel_city.requestLayout();
     }
 
     private void requestData() {
