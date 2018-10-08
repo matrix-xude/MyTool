@@ -11,7 +11,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +42,6 @@ import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.adapter.VerticalBannerAdapter;
 import jdjt.com.homepager.decoration.CommonDecoration;
-import jdjt.com.homepager.domain.SimpleString;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
@@ -370,7 +368,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         tv_home_hot_recommend_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RxToast.showToast("查看更多");
+                Intent intent = new Intent(HomeActivity.this, HotelDestinationActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -457,8 +456,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
             @Override
             public void convert(ViewHolderRecycler holder, final BackNavigationLevel backNavigationLevel, int position) {
-                holder.setText(R.id.tv_item_home_navigation, backNavigationLevel.getParamTitle() + "");
-                holder.setOnClickListener(R.id.tv_item_home_navigation, new View.OnClickListener() {
+                holder.setText(R.id.tv_item_common, backNavigationLevel.getParamTitle() + "");
+                holder.setOnClickListener(R.id.tv_item_common, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         RxToast.showToast(backNavigationLevel.getParamTitle() + "");

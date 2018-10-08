@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:drawablePadding="5dp"
         android:drawableStart="@drawable/icon_title_decoration"
-        android:text="热门城市"
         android:textColor="#FFE7C0"
         android:textSize="14.4sp"/>
 

@@ -7,7 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxImageTool;
+
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +19,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.decoration.PinYinDecoration;
 import jdjt.com.homepager.domain.HotCityItem;
 import jdjt.com.homepager.domain.PinyinItem;
+import jdjt.com.homepager.domain.back.BackChinaCity;
+import jdjt.com.homepager.domain.back.BackHotRecommend;
+import jdjt.com.homepager.domain.back.BackHotRecommendLevel;
+import jdjt.com.homepager.domain.back.BackVacation;
+import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.PinYinUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
+import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.PinYinSideBar;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterMultipleRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
@@ -36,13 +50,12 @@ import jdjt.com.homepager.view.commonRecyclerView.MultipleTypeSupport;
 
 public class HotelCityFragment extends BaseFragment {
 
-    private String[] citys = new String[]{"保定", "潮汕", "大连", "大同", "朝阳", "三亚", "北京", "阿克苏", "鞍山", "宝鸡", "沧州", "沧州", "沧州"
-            , "重庆", "毕节", "锦州", "哈密", "鄂尔多斯", "六盘水", "花果山", "布宜诺斯艾利斯", "耶路撒冷", "毛里求斯", "！！！", "fff", "火星"
-            , "M78星云", "三体星", "二向箔",};
     private List<PinyinItem> dataList;
 
     private RecyclerView recycler_fragment_hotel_city;
     private PinYinSideBar pinyin_side_bar_fragment_hotel_city;
+
+    private String type; // 1：热门目的地 2：热门度假区 3：大家都爱去
 
     @Override
     public int getLayoutId() {
@@ -63,26 +76,12 @@ public class HotelCityFragment extends BaseFragment {
     }
 
     private void initData() {
-        dataList = sortCity();
+        type = getArguments().getString("type");
+        if (dataList == null)  // 没有数据才请求，已经有了就不请求
+            requestData();
+    }
 
-        final PinyinItem item = new PinyinItem();
-        item.setType(1); // 其他类型，并非拼音
-        item.setLetter("热");
-        HotCityItem hotCityItem = new HotCityItem();
-        hotCityItem.setTitle("热门城市");
-        List<String> cityList = new ArrayList<>();
-        cityList.add("北京");
-        cityList.add("上海");
-        cityList.add("三亚");
-        cityList.add("非洲");
-        cityList.add("亚细亚");
-        cityList.add("欧罗巴");
-        cityList.add("香港");
-        cityList.add("额");
-        hotCityItem.setList(cityList);
-        item.setObject(hotCityItem);
-        dataList.add(0, item);
-
+    private void refreshListAndBar() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recycler_fragment_hotel_city.setLayoutManager(linearLayoutManager);
         recycler_fragment_hotel_city.setAdapter(new AdapterMultipleRecycler<PinyinItem>(dataList, new MultipleTypeSupport<PinyinItem>() {
@@ -104,26 +103,36 @@ public class HotelCityFragment extends BaseFragment {
                 if (pinyinItem.getType() == 0) {
                     holder.setText(R.id.tv_item_pinyin, pinyinItem.getName());
                 } else {
+                    // 标题
+                    holder.setText(R.id.tv_hot_city_title,pinyinItem.getName());
+
+                    // 热门集合
                     int lineCount = 4;
                     int maxShowCount = 12;
                     int itemHeight = RxImageTool.dp2px(28);
                     int divide = RxImageTool.dp2px(5);
                     RecyclerView recyclerView = holder.getView(R.id.recycler_item_hot_city);
-                    GridLayoutManager manager = new GridLayoutManager(getActivity(), lineCount, GridLayoutManager.VERTICAL, false);
+                    GridLayoutManager manager = new GridLayoutManager(getActivity(), lineCount, GridLayoutManager.VERTICAL, false) {
+                        @Override
+                        public boolean canScrollVertically() {
+                            return false;
+                        }
+                    };
                     recyclerView.setLayoutManager(manager);
                     HotCityItem hotCityItem = (HotCityItem) pinyinItem.getObject();
-                    List<String> list = hotCityItem.getList();
-                    int size = list.size() < maxShowCount ? list.size() : maxShowCount;
-                    LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divide, size, lineCount);
-                    recyclerView.setAdapter(new AdapterRecycler<String>(R.layout.item_city, list,
-                            new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
+                    List<BackHotRecommendLevel> list = hotCityItem.getList();
+                    AdapterRecycler<BackHotRecommendLevel> adapter = new AdapterRecycler<BackHotRecommendLevel>(R.layout.item_city, list,
+                            new Builder().setMaxShowCount(maxShowCount).setItemHeight(itemHeight)) {
                         @Override
-                        public void convert(ViewHolderRecycler holder, String string, int position) {
-                            holder.setText(R.id.tv_item_city, string);
+                        public void convert(ViewHolderRecycler holder, BackHotRecommendLevel backHotRecommendLevel, int position) {
+                            holder.setText(R.id.tv_item_city, backHotRecommendLevel.getName());
                         }
-                    });
-                    if (recyclerView.getItemDecorationCount() < 1)
-                        recyclerView.addItemDecoration(new CommonDecoration(10, lineCount, Color.RED));
+                    };
+                    LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divide, adapter.getItemCount(), lineCount);
+                    recyclerView.setAdapter(adapter);
+
+                    if (recyclerView.getItemDecorationCount() < 1)  // 不能重复添加
+                        recyclerView.addItemDecoration(new CommonDecoration(divide, lineCount, Color.TRANSPARENT));
                 }
             }
         });
@@ -141,6 +150,7 @@ public class HotelCityFragment extends BaseFragment {
                 }
             }
         }
+
         pinyin_side_bar_fragment_hotel_city.setDataList(barDataList);
         pinyin_side_bar_fragment_hotel_city.setOnTouchLetterListener(new PinYinSideBar.OnTouchLetterListener() {
             @Override
@@ -159,18 +169,69 @@ public class HotelCityFragment extends BaseFragment {
             public void onTouchEnd(String s) {
             }
         });
+        pinyin_side_bar_fragment_hotel_city.invalidate();
+    }
+
+    private void requestData() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<PinyinItem>>() {
+                    @Override
+                    public List<PinyinItem> apply(Integer integer) throws Exception {
+                        BackHotRecommend backHotRecommend = RequestHelperHomePager.getInstance().requestHotRecommendAll(type);
+                        List<PinyinItem> list = new ArrayList<>();
+
+                        List<BackHotRecommendLevel> children = backHotRecommend.getChildren();
+                        if (!RxDataTool.isEmpty(children)) { // 有数据，添加第一个PinYinItem
+                            PinyinItem pinyinItem = new PinyinItem();
+                            pinyinItem.setType(1);
+                            pinyinItem.setLetter("热");
+                            pinyinItem.setName(backHotRecommend.getName());
+                            HotCityItem hotCityItem = new HotCityItem();
+                            hotCityItem.setTitle(backHotRecommend.getName());
+                            hotCityItem.setList(children);
+                            pinyinItem.setObject(hotCityItem);
+                            list.add(pinyinItem);
+                        }
+                        // 排序并且添加数据
+                        list.addAll(sortCity(backHotRecommend.getChinaCityList()));
+
+                        return list;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<PinyinItem>>() {
+                    @Override
+                    public void accept(List<PinyinItem> pinyinItemList) throws Exception {
+                        dataList = new ArrayList<>();
+                        dataList.addAll(pinyinItemList);
+                        refreshListAndBar();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getActivity(), throwable.getMessage());
+                    }
+                });
     }
 
     // 对城市进行排序
-    private List<PinyinItem> sortCity() {
+    private List<PinyinItem> sortCity(List<BackChinaCity> chinaCityList) {
         List<PinyinItem> list = new ArrayList<>();
-        for (String s : citys) {
-            PinyinItem item = new PinyinItem();
-            list.add(item);
-            item.setObject(s);
-            item.setName(s);
-            item.setLetter(PinYinUtil.getFirstLetter(s));
-            item.setType(0);
+        if (chinaCityList != null) {
+            for (BackChinaCity city : chinaCityList) {
+                PinyinItem item = new PinyinItem();
+                list.add(item);
+                item.setObject(city);
+                item.setName(city.getRegionName());
+                item.setLetter(PinYinUtil.getFirstLetter(city.getRegionName()));
+                item.setType(0);
+            }
         }
         Collections.sort(list, new Comparator<PinyinItem>() {
             @Override
