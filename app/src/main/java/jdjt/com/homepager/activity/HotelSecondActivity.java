@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.vondear.rxtool.RxDeviceTool;
+import com.vondear.rxtool.RxImageTool;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 
@@ -27,13 +30,15 @@ import java.util.Calendar;
 import java.util.List;
 
 import jdjt.com.homepager.R;
-import jdjt.com.homepager.adapter.HomeHolidayHotelAdapter;
 import jdjt.com.homepager.adapter.HotelSecondClassifyAdapter;
-import jdjt.com.homepager.decoration.SimpleItemDecoration;
+import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.domain.SimpleString;
-import jdjt.com.homepager.util.MakeDataUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
+import jdjt.com.homepager.util.MakeDataUtil;
+import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 import jdjt.com.homepager.view.verticalCalendar.CalendarData;
 import jdjt.com.homepager.view.verticalCalendar.CalendarUtil;
 import jdjt.com.homepager.view.verticalCalendar.HotelCalendarView;
@@ -43,26 +48,43 @@ import jdjt.com.homepager.view.verticalCalendar.HotelCalendarView;
  * 酒店频道
  */
 
-public class HotelSecondActivity extends BaseActivity {
+public class HotelSecondActivity extends BaseActivity implements View.OnClickListener {
 
-    private Banner banner;
-    private LinearLayout llContent;
+    private RelativeLayout rl_hotel_second_parent; // 整个页面，弹框使用
+    private NestedScrollView nest_scroll_hotel_second; //
+
+    private RelativeLayout rl_hotel_second_head_all; // 包含状态头的头，渐变
+    private RelativeLayout ll_hotel_second_head; // 不包含状态头的头
+    private ImageView iv_hotel_second_back; // 返回
+    private Banner banner_hotel_second;
+    private CardView card_view_hotel_second; // 查询条件整个
+
+    // 圆角查询条件中所有控件
+    private RelativeLayout rlDestination; // 目的地
+    private RelativeLayout rlLocation; // 定位按钮
+    private LinearLayout llTime; // 入离时间
+    private TextView tvCheckIn;
+    private TextView tvCheckOut;
+    private TextView tvDayCount;
+    private TextView tvKeyword; // 关键字
+    private TextView tvQuery; // 查询
+
+    private RecyclerView recyclerClassify; // 分类
+    private RecyclerView recyclerLike; // 猜你喜欢
 
     // 当前选择的起始日期
     private String mStartDate;
     private String mEndDate;
     private boolean isSelected; // 是否选择过了日历
 
+    private CommonPopupWindow popupWindow;
     private Handler handler = new Handler() {
     };
-    // 日历用到的控件
-    private CommonPopupWindow popupWindow;
-    private TextView tvCheckIn;
-    private TextView tvCheckOut;
-    private TextView tvDayCount;
 
-    // 关键字
-    private TextView tvKeyword;
+
+    private final static int mHeadDp = 40; // 头的高度，不包含导航栏
+    private final static int mHeadBannerDp = 180; // 头图banner高度
+    private final static int mModuleTop = 5; // 搜索条件突出到头图的高度
 
     private final int REQUEST_CODE_KEYWORD = 1;
     private final int REQUEST_CODE_DESTINATION = 2;
@@ -70,125 +92,130 @@ public class HotelSecondActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtil.fitSystemWindow(this);
         setContentView(R.layout.activity_hotel_second);
         initView();
         initData();
     }
 
     private void initView() {
-        banner = findViewById(R.id.banner_hotel_second);
-        llContent = findViewById(R.id.ll_nest_content_hotel_second);
+        rl_hotel_second_parent = findViewById(R.id.rl_hotel_second_parent);
+        nest_scroll_hotel_second = findViewById(R.id.nest_scroll_hotel_second);
+
+        rl_hotel_second_head_all = findViewById(R.id.rl_hotel_second_head_all);
+        LayoutParamsUtil.setHeightPx(rl_hotel_second_head_all, RxImageTool.dp2px(mHeadDp) + StatusBarUtil.getStatusBarHeight(this));
+        ll_hotel_second_head = findViewById(R.id.ll_hotel_second_head);
+        // 留出导航栏高度
+        LayoutParamsUtil.setMargins(ll_hotel_second_head, 0, StatusBarUtil.getStatusBarHeight(this), 0, 0);
+        iv_hotel_second_back = findViewById(R.id.iv_hotel_second_back);
+
+        banner_hotel_second = findViewById(R.id.banner_hotel_second);
+        LayoutParamsUtil.setHeight(banner_hotel_second, mHeadBannerDp);
+        card_view_hotel_second = findViewById(R.id.card_view_hotel_second);
+        LayoutParamsUtil.setMargins(card_view_hotel_second, RxImageTool.dp2px(10), RxImageTool.dp2px(mHeadBannerDp - mModuleTop), RxImageTool.dp2px(10), 0);
+
+        recyclerClassify = findViewById(R.id.recycler_hotel_second_classify);
+        recyclerLike = findViewById(R.id.recycler_hotel_second_like);
     }
 
     private void initData() {
-        initBanner();
-        initNestScrollView();
-    }
-
-    // 初始化nestscrollview的内容
-    private void initNestScrollView() {
-        addSearchModule();
-        addClassifyModule();
-        addHolidayHotel();
-    }
-
-    /**
-     * 添加猜你喜欢模块
-     */
-    private void addHolidayHotel() {
-//        int itemHeight = 132;
-//        int maxShowNumber = 10;
-//        int divideSpace = 1;
-//        List<SimpleString> dataList = MakeDataUtil.makeSimpleString(12, "度假酒店");
-//        int size = dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber;
-//
-//        View view = View.inflate(this, R.layout.home_vacation, null);
-//        TextView tvTitle = view.findViewById(R.id.tv_home_holiday_hotel_title);
-//        tvTitle.setText("猜你喜欢");
-//        TextView tvMore = view.findViewById(R.id.tv_home_holiday_hotel_more);
-//        tvMore.setVisibility(View.GONE);
-//        RecyclerView recyclerView = view.findViewById(R.id.recycler_home_view_holiday_hotel);
-//        LayoutParamsUtil.setHeight(recyclerView, size * itemHeight + divideSpace * (size - 1));
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false) {
-//            @Override
-//            public boolean canScrollVertically() {
-//                return false;
-//            }
-//        };
-//        recyclerView.setLayoutManager(layoutManager);
-//        recyclerView.setAdapter(new HomeHolidayHotelAdapter(dataList, itemHeight, maxShowNumber));
-//        recyclerView.addItemDecoration(new SimpleItemDecoration(divideSpace, Color.parseColor("#3E3F41")));
-//
-//        llContent.addView(view);
-    }
-
-    /**
-     * 添加酒店分类页面
-     */
-    private void addClassifyModule() {
-        int itemHeight = 65;
-        int maxShowNumber = 7;  // 最后显示的item,之后添加全部分类
-        int spanCount = 4; // 一行显示几个
-
-        View view = View.inflate(this, R.layout.hotel_second_classify, null);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_hotel_second_classify);
-        LayoutParamsUtil.setHeight(recyclerView, itemHeight * (maxShowNumber / spanCount + 1)); // 需要多一个全部
-        // 设置item
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), spanCount, GridLayoutManager.VERTICAL, false) {
+        // 渐变
+        final int distance = RxImageTool.dp2px(mHeadBannerDp - mHeadDp) - StatusBarUtil.getStatusBarHeight(this);
+        nest_scroll_hotel_second.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(new HotelSecondClassifyAdapter(MakeDataUtil.makeClassifyString(), itemHeight, maxShowNumber));
-        llContent.addView(view);
-
-    }
-
-    /**
-     * 添加搜索条件的module
-     */
-    private void addSearchModule() {
-        View view = View.inflate(this, R.layout.hotel_second_search, null);
-
-        RelativeLayout rlDestination = view.findViewById(R.id.rl_hotel_second_search_destination); // 入离时间
-        rlDestination.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HotelSecondActivity.this, HotelDestinationActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_DESTINATION);
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                float gap = (float) scrollY / distance;
+                if (gap > 1)
+                    gap = 1;
+                if (gap < 0)
+                    gap = 0;
+                rl_hotel_second_head_all.setAlpha(gap);
             }
         });
 
-        LinearLayout llTime = view.findViewById(R.id.ll_hotel_second_search_time); // 入离时间
-        tvCheckIn = view.findViewById(R.id.tv_hotel_second_search_check_in);
-        tvCheckOut = view.findViewById(R.id.tv_hotel_second_search_check_out);
-        tvDayCount = view.findViewById(R.id.tv_hotel_second_search_day_count);
+        iv_hotel_second_back.setOnClickListener(this);
+
+        initBanner();
+        initSearchModule();
+        refreshClassifyModule();
+        refreshHolidayHotel();
+    }
+
+    /**
+     * 初始化搜索条件的module
+     */
+    private void initSearchModule() {
+
+        rlDestination = findViewById(R.id.rl_hotel_second_search_destination); // 目的地
+        rlDestination.setOnClickListener(this);
+
+        rlLocation = findViewById(R.id.rl_hotel_second_search_location); // 定位按钮
+        rlLocation.setOnClickListener(this);
+
+        llTime = findViewById(R.id.ll_hotel_second_search_time); // 入离时间
+        llTime.setOnClickListener(this);
+        tvCheckIn = findViewById(R.id.tv_hotel_second_search_check_in);
+        tvCheckOut = findViewById(R.id.tv_hotel_second_search_check_out);
+        tvDayCount = findViewById(R.id.tv_hotel_second_search_day_count);
+
         Calendar c = Calendar.getInstance(); // 初始化当前时间，默认一天
         mStartDate = CalendarUtil.getStringDate(c);
         c.add(Calendar.DAY_OF_MONTH, 1);
         mEndDate = CalendarUtil.getStringDate(c);
         setDateText(mStartDate, mEndDate);
-        llTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popCalendar();
-            }
-        });
 
-        tvKeyword = view.findViewById(R.id.tv_hotel_second_search_keyword); // 关键字
-        tvKeyword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HotelSecondActivity.this, HotelSearchActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_KEYWORD);
-            }
-        });
+        tvKeyword = findViewById(R.id.tv_hotel_second_search_keyword); // 关键字
+        tvKeyword.setOnClickListener(this);
 
-        llContent.addView(view);
+        tvQuery = findViewById(R.id.tv_hotel_second_search_query); // 查询按钮
+        tvQuery.setOnClickListener(this);
     }
 
+    /**
+     * 刷新酒店分类页面
+     */
+    private void refreshClassifyModule() {
+        int maxShowNumber = 7;  // 最后显示的item,之后添加全部分类
+        int spanCount = 4; // 一行显示几个
+
+        // 设置item
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount, GridLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        recyclerClassify.setLayoutManager(gridLayoutManager);
+        recyclerClassify.setAdapter(new HotelSecondClassifyAdapter(MakeDataUtil.makeClassifyString(), maxShowNumber));
+    }
+
+    /**
+     * 刷新猜你喜欢模块
+     */
+    private void refreshHolidayHotel() {
+
+        int maxShowNumber = 10;
+        int divide = RxImageTool.dp2px(0.48f);
+        List<SimpleString> list = MakeDataUtil.makeSimpleString(11);
+
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        recyclerLike.setLayoutManager(manager);
+        recyclerLike.setAdapter(new AdapterRecycler<SimpleString>(R.layout.item_hotel, list,
+                new AdapterRecycler.Builder().setMaxShowCount(maxShowNumber)) {
+            @Override
+            public void convert(ViewHolderRecycler holder, SimpleString simpleString, int position) {
+                holder.setText(R.id.tv_item_hotel_name, simpleString.getName());
+            }
+        });
+        recyclerLike.addItemDecoration(new CommonDecoration(divide,1, Color.parseColor("#3E3F41")));
+    }
+
+    // 弹出日历选择框
     private void popCalendar() {
         int screenHeight = RxDeviceTool.getScreenHeight(this);
         popupWindow = new CommonPopupWindow.Builder(this)
@@ -238,15 +265,15 @@ public class HotelSecondActivity extends BaseActivity {
                     }
                 })
                 .create();
-        popupWindow.showAtLocation(llContent, Gravity.BOTTOM, 0, 0);
+        popupWindow.showAtLocation(rl_hotel_second_parent, Gravity.BOTTOM, 0, 0);
     }
 
-
-    public void setDateText(String start, String end) {
+    // 设置显示时间
+    private void setDateText(String start, String end) {
         CalendarData startCalendarData = CalendarUtil.getCalendarData(start);
         CalendarData endCalendarData = CalendarUtil.getCalendarData(end);
-        tvCheckIn.setText(startCalendarData.getMonth() + "月" + endCalendarData.getDay() + "日");
-        tvCheckOut.setText(startCalendarData.getMonth() + "月" + endCalendarData.getDay() + "日");
+        tvCheckIn.setText(startCalendarData.getMonth() + "月" + startCalendarData.getDay() + "日");
+        tvCheckOut.setText(endCalendarData.getMonth() + "月" + endCalendarData.getDay() + "日");
         int dayCount = CalendarUtil.getDayCountBetweenBothCalendar(startCalendarData, endCalendarData);
         tvDayCount.setText(dayCount + "晚");
     }
@@ -261,7 +288,7 @@ public class HotelSecondActivity extends BaseActivity {
         list.add(R.drawable.bg5);
         MyImageLoader imageLoader = new MyImageLoader();
 
-        banner.setImages(list)
+        banner_hotel_second.setImages(list)
                 .setImageLoader(imageLoader)
                 .start();
     }
@@ -283,6 +310,31 @@ public class HotelSecondActivity extends BaseActivity {
             tvKeyword.setText(searchName);
         } else if (requestCode == REQUEST_CODE_DESTINATION && resultCode == 1) {
 
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_hotel_second_back:
+                onBackPressed();
+                break;
+            case R.id.rl_hotel_second_search_destination: // 目的地
+                Intent intent = new Intent(HotelSecondActivity.this, HotelDestinationActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_DESTINATION);
+                break;
+            case R.id.rl_hotel_second_search_location: // 定位按钮
+                break;
+            case R.id.ll_hotel_second_search_time: // 入离时间
+                popCalendar();
+                break;
+            case R.id.tv_hotel_second_search_keyword: // 关键字
+                Intent intent2 = new Intent(HotelSecondActivity.this, HotelSearchActivity.class);
+                startActivityForResult(intent2, REQUEST_CODE_KEYWORD);
+                break;
+            case R.id.tv_hotel_second_search_query: // 查询按钮
+                break;
         }
     }
 }

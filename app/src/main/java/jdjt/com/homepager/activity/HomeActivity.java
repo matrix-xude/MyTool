@@ -175,7 +175,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 RxToast.showToast("search");
                 break;
             case R.id.iv_home_head_v_member:
-                RxToast.showToast("V客会");
+//                RxToast.showToast("V客会");
+                Intent intent = new Intent(HomeActivity.this, HotelSecondActivity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -240,7 +242,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             maxShowCount = 3;
             layoutId = R.layout.item_home_vacation_set_meal;
         } else if (type == 1) { // 度假酒店
-//            itemHeight = RxImageTool.dp2px(132);
             divide = RxImageTool.dp2px(1);
             maxShowCount = 6;
             layoutId = R.layout.item_hotel;

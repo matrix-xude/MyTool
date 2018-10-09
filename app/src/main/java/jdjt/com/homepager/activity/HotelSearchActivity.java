@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vondear.rxtool.RxDataTool;
+import com.vondear.rxtool.RxImageTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
 import jdjt.com.homepager.R;
-import jdjt.com.homepager.decoration.SimpleItemDecoration;
+import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.view.ClearEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
@@ -170,7 +171,7 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
             LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recycler_pop_hotel_search.setLayoutManager(manager);
             recycler_pop_hotel_search.setAdapter(mAdapter);
-            recycler_pop_hotel_search.addItemDecoration(new SimpleItemDecoration(1, Color.parseColor("#393A3C")));
+            recycler_pop_hotel_search.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(1),1, Color.parseColor("#393A3C")));
         } else {
             mAdapter.notifyDataSetChanged();
         }

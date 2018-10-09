@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/rl_item_hotel_second_classify"
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:id="@+id/rl_item_hotel_second_classify_click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="5dp">
 
-        <RelativeLayout
-            android:id="@+id/rl_item_hotel_second_classify_click"
+        <ImageView
+            android:id="@+id/iv_item_hotel_second_classify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerInside"/>
 
-            <ImageView
-                android:id="@+id/iv_item_hotel_second_classify"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:id="@+id/tv_item_hotel_second_classify"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_item_hotel_second_classify"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/white"
-                android:textSize="12.48sp"/>
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_item_hotel_second_classify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_item_hotel_second_classify"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="12.48sp"/>
     </RelativeLayout>
-</FrameLayout>
+</RelativeLayout>
