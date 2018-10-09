@@ -1,9 +1,11 @@
 package jdjt.com.homepager.http;
 
+import jdjt.com.homepager.domain.back.BackBase;
 import jdjt.com.homepager.domain.back.BackBaseList;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
+import jdjt.com.homepager.domain.back.BackMVMNew;
 import jdjt.com.homepager.domain.back.BackNavigation;
 import jdjt.com.homepager.domain.back.BackVacation;
 import okhttp3.RequestBody;
@@ -67,6 +69,15 @@ public interface ServiceGson {
      */
     @GET("api/api/v1/m/banner/list/{type_id}")
     Call<BackBaseList<BackHeadImage>> getHeadImage(@Path("type_id") String id);
+
+    /**
+     * 猫推荐新闻，垂直轮播
+     *
+     * @param id 12:猫推荐
+     * @return
+     */
+    @GET("api/api/v1/news/{type_id}")
+    Call<BackBaseList<BackMVMNew>> getMVMNew(@Path("type_id") String id);
 
 
 }

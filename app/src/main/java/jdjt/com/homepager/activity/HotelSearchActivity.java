@@ -155,11 +155,11 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
         if (recycler_pop_hotel_search.getVisibility() == View.GONE)
             recycler_pop_hotel_search.setVisibility(View.VISIBLE);
         if (mAdapter == null) {
-            mAdapter = new AdapterRecycler<String>(R.layout.item_common_text, dataList) {
+            mAdapter = new AdapterRecycler<String>(R.layout.item_search_relative, dataList) {
                 @Override
                 public void convert(ViewHolderRecycler holder, final String s, int position) {
-                    holder.setText(R.id.tv_item_common, s);
-                    holder.setOnClickListener(R.id.tv_item_common, new View.OnClickListener() {
+                    holder.setText(R.id.tv_name, s);
+                    holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             backToPreviousActivity(s);

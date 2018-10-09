@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
+import com.taobao.library.BaseBannerAdapter;
 import com.taobao.library.VerticalBannerView;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxDeviceTool;
@@ -40,12 +41,12 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
-import jdjt.com.homepager.adapter.VerticalBannerAdapter;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackHotRecommendLevel;
+import jdjt.com.homepager.domain.back.BackMVMNew;
 import jdjt.com.homepager.domain.back.BackNavigation;
 import jdjt.com.homepager.domain.back.BackNavigationLevel;
 import jdjt.com.homepager.domain.back.BackVacation;
@@ -54,7 +55,6 @@ import jdjt.com.homepager.framgnet.HotRecommendFragment;
 import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
-import jdjt.com.homepager.util.MakeDataUtil;
 import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
@@ -153,6 +153,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         });
         requestHeadBanner();
         requestNavigation();
+        requestMVMNew();
         requestHotRecommend();
         requestHotActivity();
         requestVacation();
@@ -375,9 +376,51 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     }
 
     // 刷新动态头条
-    private void refreshVerticalBanner() {
-        vertical_banner_home.setAdapter(new VerticalBannerAdapter(MakeDataUtil.makeHeadlineData()));
-        vertical_banner_home.start();
+    private void refreshMVMNews(final List<BackMVMNew> list) {
+        // 用来索引的
+        List<Integer> indexList = new ArrayList<>();
+        // 每页展示2行数据
+        int pagerCount = 2;
+        if (list == null) {
+            vertical_banner_home.stop();
+        } else {
+            for (int i = 0; pagerCount * i < list.size(); i++) {
+                indexList.add(i);
+            }
+            vertical_banner_home.setAdapter(new BaseBannerAdapter<Integer>(indexList) {
+                @Override
+                public View getView(VerticalBannerView verticalBannerView) {
+                    return View.inflate(verticalBannerView.getContext(), R.layout.item_home_vertical_banner, null);
+                }
+
+                @Override
+                public void setItem(View view, Integer integer) {
+                    TextView tv1 = view.findViewById(R.id.tv_item_home_vertical_banner_1);
+                    TextView tv2 = view.findViewById(R.id.tv_item_home_vertical_banner_2);
+                    if (integer < list.size()) {
+                        final BackMVMNew backMVMNew = list.get(integer);
+                        tv1.setText(backMVMNew.getTitle());
+                        tv1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                RxToast.normal(backMVMNew.getContent());
+                            }
+                        });
+                    }
+                    if (integer + 1 < list.size()) {
+                        final BackMVMNew backMVMNew = list.get(integer + 1);
+                        tv2.setText(backMVMNew.getTitle());
+                        tv2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                RxToast.normal(backMVMNew.getContent());
+                            }
+                        });
+                    }
+                }
+            });
+            vertical_banner_home.start();
+        }
     }
 
     // 刷新导航模块，动态添加，没有数据隐藏
@@ -456,8 +499,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
             @Override
             public void convert(ViewHolderRecycler holder, final BackNavigationLevel backNavigationLevel, int position) {
-                holder.setText(R.id.tv_item_common, backNavigationLevel.getParamTitle() + "");
-                holder.setOnClickListener(R.id.tv_item_common, new View.OnClickListener() {
+                holder.setText(R.id.tv_name, backNavigationLevel.getParamTitle() + "");
+                holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         RxToast.showToast(backNavigationLevel.getParamTitle() + "");
@@ -565,6 +608,34 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                     @Override
                     public void accept(List<BackNavigation> backNavigationList) throws Exception {
                         refreshNavigation(backNavigationList);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
+    }
+
+    private void requestMVMNew() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackMVMNew>>() {
+                    @Override
+                    public List<BackMVMNew> apply(Integer integer) throws Exception {
+                        return RequestHelperHomePager.getInstance().requestMVMNew("12");
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackMVMNew>>() {
+                    @Override
+                    public void accept(List<BackMVMNew> backMVMNews) throws Exception {
+                        refreshMVMNews(backMVMNews);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

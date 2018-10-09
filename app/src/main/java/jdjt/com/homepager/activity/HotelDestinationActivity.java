@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,8 +29,6 @@ import java.util.List;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.framgnet.HotelCityFragment;
-import jdjt.com.homepager.framgnet.HotelHolidayFragment;
-import jdjt.com.homepager.framgnet.HotelScenicFragment;
 import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.view.ClearEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
@@ -118,17 +117,32 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
                 }
             }
         });
+
+        // 监听键盘搜索按钮
+        et_hotel_destination.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    String s = et_hotel_destination.getText().toString();
+                    if (RxDataTool.isEmpty(s))
+                        return false;
+                    // TODO 搜索按钮被点击
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void refreshList(String searchContent) {
         if (recycler_destination_search.getVisibility() == View.GONE)
             recycler_destination_search.setVisibility(View.VISIBLE);
         if (mAdapter == null) {
-            mAdapter = new AdapterRecycler<String>(R.layout.item_common_text, dataList) {
+            mAdapter = new AdapterRecycler<String>(R.layout.item_search_relative, dataList) {
                 @Override
                 public void convert(ViewHolderRecycler holder, final String s, int position) {
-                    holder.setText(R.id.tv_item_common, s);
-                    holder.setOnClickListener(R.id.tv_item_common, new View.OnClickListener() {
+                    holder.setText(R.id.tv_name, s);
+                    holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 

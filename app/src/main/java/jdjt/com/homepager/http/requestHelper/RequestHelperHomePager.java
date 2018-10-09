@@ -11,6 +11,7 @@ import jdjt.com.homepager.domain.back.BackBaseList;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
+import jdjt.com.homepager.domain.back.BackMVMNew;
 import jdjt.com.homepager.domain.back.BackNavigation;
 import jdjt.com.homepager.domain.back.BackVacation;
 import jdjt.com.homepager.http.CodeException;
@@ -151,6 +152,26 @@ public class RequestHelperHomePager {
         Call<BackBaseList<BackHeadImage>> call = RetrofitAssistant.getNewGsonService().getHeadImage(type);
         Response<BackBaseList<BackHeadImage>> response = call.execute();
         BackBaseList<BackHeadImage> body = response.body();
+        if (body == null)
+            throw new CodeException("返回body为null");
+        if (!RetrofitAssistant.SUCCEED_CODE.equals(body.getCode()))
+            throw new CodeException(body.getMsg());
+        return body.getData();
+    }
+
+    /**
+     *  猫推荐头条，垂直轮播的
+     * @param type 7:平台首页公告;8:猫超市公告;9:生活Mall公告;11:猫超市资讯;12:猫推荐;14:目的地;15:特色;16:线路
+     *             默认 12
+     * @return
+     * @throws IOException
+     * @throws CodeException
+     */
+    public List<BackMVMNew> requestMVMNew(String type) throws IOException, CodeException {
+
+        Call<BackBaseList<BackMVMNew>> call = RetrofitAssistant.getNewGsonService().getMVMNew(type);
+        Response<BackBaseList<BackMVMNew>> response = call.execute();
+        BackBaseList<BackMVMNew> body = response.body();
         if (body == null)
             throw new CodeException("返回body为null");
         if (!RetrofitAssistant.SUCCEED_CODE.equals(body.getCode()))
