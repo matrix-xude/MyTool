@@ -27,6 +27,7 @@ import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
+import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.view.ClearEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
@@ -52,6 +53,7 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.bg_content));
         setContentView(R.layout.activity_hotel_search);
         initView();
         initData();
@@ -171,7 +173,7 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
             LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recycler_pop_hotel_search.setLayoutManager(manager);
             recycler_pop_hotel_search.setAdapter(mAdapter);
-            recycler_pop_hotel_search.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(1),1, Color.parseColor("#393A3C")));
+            recycler_pop_hotel_search.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(1), 1, Color.parseColor("#393A3C")));
         } else {
             mAdapter.notifyDataSetChanged();
         }
