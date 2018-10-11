@@ -23,6 +23,7 @@
                 android:id="@+id/banner_home_head"
                 android:layout_width="match_parent"
                 android:layout_height="162dp"
+                app:delay_time="6000"
                 app:indicator_drawable_selected="@drawable/icon_pager_selected"
                 app:indicator_drawable_unselected="@drawable/icon_pager_unselected"/>
 

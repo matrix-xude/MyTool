@@ -42,6 +42,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
+import jdjt.com.homepager.domain.HotelDestination;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
@@ -95,6 +96,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private final int mHeadDp = 40; // 头的高度，不包含导航栏
     private final int mHeadBannerDp = 180; // 头图banner高度
+
+    private final int TO_DESTINATION_ACTIVITY = 1; // 热门推荐查看更多跳转
 
 
     @Override
@@ -169,7 +172,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 RxToast.showToast("房车营地");
                 break;
             case R.id.iv_home_head_scan:
-                RxToast.showToast("扫一扫");
+//                RxToast.showToast("扫一扫");
+                Intent intent2 = new Intent(HomeActivity.this, HotelListActivity.class);
+                startActivity(intent2);
                 break;
             case R.id.tv_home_head_search:
                 RxToast.showToast("search");
@@ -221,8 +226,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 public void onClick(View v) {
                     if (type == 0) { // 度假套餐
                         RxToast.showToast("度假套餐-更多");
+                        // TODO  跳转h5
+                        // http://rc-ws.mymhotel.com/api/h5/v1/shopping/menu/group/0-0-0-1/list.html
                     } else if (type == 1) { // 度假酒店
-                        RxToast.showToast("度假酒店-更多");
+                        Intent intent = new Intent(HomeActivity.this, HotelListActivity.class);
+                        startActivity(intent);
                     }
                 }
             });
@@ -371,7 +379,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, HotelDestinationActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, TO_DESTINATION_ACTIVITY);
             }
         });
     }
@@ -466,7 +474,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             ImageView iv_home_navigation_bg = view.findViewById(R.id.iv_home_navigation_bg);
             GlideLoadUtil.loadImage(this, typeContent, iv_home_navigation_bg);
         } else if (backgroundType == 2) { // 色值
-            rlNavigation.setBackgroundColor(Color.parseColor(typeContent));
+            if (!RxDataTool.isEmpty(typeContent)) {
+                rlNavigation.setBackgroundColor(Color.parseColor(typeContent));
+            } else {
+                rlNavigation.setBackgroundColor(getResources().getColor(R.color.moccasin));
+            }
+        } else { // 不是图片，不是色值
+            rlNavigation.setBackgroundColor(getResources().getColor(R.color.lightsteelblue));
         }
 
         // 设置左侧大模块的文字、点击事件
@@ -479,11 +493,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 switch (typeId) {  //1：度假酒店；2：度假套餐；3：猫超市；4：线路游；5:猫玩乐;6:现在生活mall
                     case 1:
                         intent.setClass(HomeActivity.this, HotelSecondActivity.class);
+                        startActivity(intent);
                         break;
                     case 2:
+                        // TODO 跳转页面
+                        // /h5/v1/shopping/vacationPackage/index.html
                         break;
                 }
-                startActivity(intent);
             }
         });
 
@@ -730,5 +746,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 });
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TO_DESTINATION_ACTIVITY && resultCode == 1) {
+            HotelDestination destination = (HotelDestination) data.getSerializableExtra("destination");
+            if (destination != null) {
+                // TODO 跳转到全部搜索页面
+            }
+        }
+    }
 }

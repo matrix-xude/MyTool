@@ -1,5 +1,6 @@
 package jdjt.com.homepager.framgnet;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,12 +28,12 @@ import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.decoration.PinYinDecoration;
+import jdjt.com.homepager.domain.HotelDestination;
 import jdjt.com.homepager.domain.HotCityItem;
 import jdjt.com.homepager.domain.PinyinItem;
 import jdjt.com.homepager.domain.back.BackChinaCity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackHotRecommendLevel;
-import jdjt.com.homepager.domain.back.BackVacation;
 import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.PinYinUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
@@ -56,6 +57,8 @@ public class HotelCityFragment extends BaseFragment {
     private PinYinSideBar pinyin_side_bar_fragment_hotel_city;
 
     private String type; // 1：热门目的地 2：热门度假区 3：大家都爱去
+
+    private String mTitle; // 后台判断用，当前类型
 
     @Override
     public int getLayoutId() {
@@ -81,6 +84,14 @@ public class HotelCityFragment extends BaseFragment {
             requestData();
     }
 
+    // 带着数据返回前一个页面
+    private void backWithData(HotelDestination data) {
+        Intent intent = new Intent();
+        intent.putExtra("destination", data);
+        getActivity().setResult(1, intent);
+        getActivity().finish();
+    }
+
     private void refreshListAndBar() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recycler_fragment_hotel_city.setLayoutManager(linearLayoutManager);
@@ -99,12 +110,24 @@ public class HotelCityFragment extends BaseFragment {
             }
         }) {
             @Override
-            public void convert(ViewHolderRecycler holder, PinyinItem pinyinItem, int position) {
+            public void convert(ViewHolderRecycler holder, final PinyinItem pinyinItem, int position) {
                 if (pinyinItem.getType() == 0) {
                     holder.setText(R.id.tv_item_pinyin, pinyinItem.getName());
+                    holder.setOnClickListener(R.id.tv_item_pinyin, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            HotelDestination hotelDestination = new HotelDestination();
+                            hotelDestination.setTitle(mTitle);
+                            BackChinaCity backChinaCity = (BackChinaCity) pinyinItem.getObject();
+                            hotelDestination.setId(backChinaCity.getId());
+                            hotelDestination.setName(backChinaCity.getRegionName());
+                            backWithData(hotelDestination);
+                        }
+                    });
                 } else {
                     // 标题
-                    holder.setText(R.id.tv_hot_city_title,pinyinItem.getName());
+                    final HotCityItem hotCityItem = (HotCityItem) pinyinItem.getObject();
+                    holder.setText(R.id.tv_hot_city_title, hotCityItem.getTitle());
 
                     // 热门集合
                     int lineCount = 4;
@@ -119,13 +142,22 @@ public class HotelCityFragment extends BaseFragment {
                         }
                     };
                     recyclerView.setLayoutManager(manager);
-                    HotCityItem hotCityItem = (HotCityItem) pinyinItem.getObject();
                     List<BackHotRecommendLevel> list = hotCityItem.getList();
                     AdapterRecycler<BackHotRecommendLevel> adapter = new AdapterRecycler<BackHotRecommendLevel>(R.layout.item_city, list,
                             new Builder().setMaxShowCount(maxShowCount).setItemHeight(itemHeight)) {
                         @Override
-                        public void convert(ViewHolderRecycler holder, BackHotRecommendLevel backHotRecommendLevel, int position) {
+                        public void convert(ViewHolderRecycler holder, final BackHotRecommendLevel backHotRecommendLevel, int position) {
                             holder.setText(R.id.tv_item_city, backHotRecommendLevel.getName());
+                            holder.setOnClickListener(R.id.tv_item_city, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    HotelDestination hotelDestination = new HotelDestination();
+                                    hotelDestination.setTitle(hotCityItem.getTitle());
+                                    hotelDestination.setId(backHotRecommendLevel.getRefId());
+                                    hotelDestination.setName(backHotRecommendLevel.getName());
+                                    backWithData(hotelDestination);
+                                }
+                            });
                         }
                     };
                     LayoutParamsUtil.setHeightPx(recyclerView, itemHeight, divide, adapter.getItemCount(), lineCount);
@@ -178,6 +210,7 @@ public class HotelCityFragment extends BaseFragment {
                     @Override
                     public List<PinyinItem> apply(Integer integer) throws Exception {
                         BackHotRecommend backHotRecommend = RequestHelperHomePager.getInstance().requestHotRecommendAll(type);
+                        mTitle = backHotRecommend.getName();
                         List<PinyinItem> list = new ArrayList<>();
 
                         List<BackHotRecommendLevel> children = backHotRecommend.getChildren();

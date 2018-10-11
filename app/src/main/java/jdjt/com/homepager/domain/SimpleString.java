@@ -10,6 +10,8 @@ public class SimpleString implements Serializable {
 
     private String name;
     private int type;
+    private boolean isChoice;
+    private String id;
 
     public SimpleString() {
     }
@@ -32,5 +34,21 @@ public class SimpleString implements Serializable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isChoice() {
+        return isChoice;
+    }
+
+    public void setChoice(boolean choice) {
+        isChoice = choice;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

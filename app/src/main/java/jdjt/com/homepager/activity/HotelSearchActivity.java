@@ -45,10 +45,11 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
     private TagContainerLayout tagHistory;
     private TagContainerLayout tagHot;
 
-
     private RecyclerView recycler_pop_hotel_search;
     private AdapterRecycler<String> mAdapter;
     private List<String> dataList;
+
+    private String mLastKeyword; // 上个页面的关键字
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initData() {
+        mLastKeyword = getIntent().getStringExtra("lastKeyword");
         final List<String> historyString = getHistoryString();
 
         iv_hotel_search_history_delete.setOnClickListener(this);
@@ -144,14 +146,16 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                     String s = et_hotel_search.getText().toString();
-                    if (RxDataTool.isEmpty(s))
-                        return false;
                     backToPreviousActivity(s);
                     return true;
                 }
                 return false;
             }
         });
+
+        if (!RxDataTool.isEmpty(mLastKeyword)) {
+            et_hotel_search.setText(mLastKeyword);
+        }
     }
 
     private void refreshList(String searchContent) {

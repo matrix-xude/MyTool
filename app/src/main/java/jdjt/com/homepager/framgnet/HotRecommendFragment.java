@@ -4,13 +4,16 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.vondear.rxtool.RxImageTool;
 
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
+import jdjt.com.homepager.domain.HotelDestination;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackHotRecommendLevel;
 import jdjt.com.homepager.util.GlideLoadUtil;
@@ -77,16 +80,28 @@ public class HotRecommendFragment extends BaseFragment {
         recyclerView.setAdapter(new AdapterRecycler<BackHotRecommendLevel>(R.layout.item_home_hot_recommend, hotRecommend.getChildren(),
                 new AdapterRecycler.Builder().setMaxShowCount(maxShowCount)) {
             @Override
-            public void convert(ViewHolderRecycler holder, BackHotRecommendLevel backHotRecommendLevel, int position) {
+            public void convert(ViewHolderRecycler holder, final BackHotRecommendLevel backHotRecommendLevel, int position) {
                 // 替换每个条目的高度
                 RelativeLayout rlItem = holder.getView(R.id.rl_item_home_hot_recommend);
                 LayoutParamsUtil.setHeightPx(rlItem, position < lineCount ? heightFirstRow : heightOtherRow);
                 BackHotRecommendLevel level = dataList.get(position);
                 holder.setText(R.id.tv_item_home_hot_recommend_name, level.getName());
                 if (position < lineCount) { // 第一行才有图背景
+                    TextView tvName = holder.getView(R.id.tv_item_home_hot_recommend_name);
+                    tvName.setBackgroundColor(Color.TRANSPARENT);
                     ImageView ivBg = holder.getView(R.id.iv_item_home_hot_recommend_bg);
                     GlideLoadUtil.loadImage(getContext(), level.getImage(), ivBg);
                 }
+                holder.setOnClickListener(R.id.tv_item_home_hot_recommend_name, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HotelDestination destination = new HotelDestination();
+                        destination.setTitle(hotRecommend.getName());
+                        destination.setId(backHotRecommendLevel.getRefId());
+                        destination.setName(backHotRecommendLevel.getName());
+                        // TODO 跳转到全部搜索页面
+                    }
+                });
             }
         });
         recyclerView.addItemDecoration(new CommonDecoration(divide, lineCount, Color.TRANSPARENT));
