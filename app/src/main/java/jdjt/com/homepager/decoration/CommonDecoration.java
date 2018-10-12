@@ -41,8 +41,12 @@ public class CommonDecoration extends RecyclerView.ItemDecoration {
         if (position / lineCount != 0) { // 不是第一行
             outRect.top = dividePx;
         }
-        if (position % lineCount != 0) { // 不是第一列
-            outRect.left = dividePx;
+//        if (position % lineCount != 0) { // 不是第一列
+//            outRect.left = dividePx;
+//        }
+        if (lineCount > 1) {
+            outRect.left = dividePx / 2;
+            outRect.right = dividePx / 2;
         }
     }
 
@@ -69,6 +73,25 @@ public class CommonDecoration extends RecyclerView.ItemDecoration {
                 }
                 int bottom = view.getBottom();
                 c.drawRect(left, top, right, bottom, mPaint);
+            }
+            if (lineCount > 1) {
+                int left = view.getLeft() - dividePx / 2;
+                int right = view.getLeft();
+                int top = view.getTop();
+                if (position / lineCount != 0) {
+                    top = view.getTop() - dividePx;
+                }
+                int bottom = view.getBottom();
+                c.drawRect(left, top, right, bottom, mPaint);
+
+                int left2 = view.getRight();
+                int right2 = view.getRight() + dividePx / 2;
+                int top2 = view.getTop();
+                if (position / lineCount != 0) {
+                    top2 = view.getTop() - dividePx;
+                }
+                int bottom2 = view.getBottom();
+                c.drawRect(left2, top2, right2, bottom2, mPaint);
             }
         }
     }

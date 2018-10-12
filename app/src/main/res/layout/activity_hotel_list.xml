@@ -110,6 +110,9 @@
                 android:layout_centerInParent="true"
                 android:drawableEnd="@drawable/icon_hotel_arrow_down_gray"
                 android:drawablePadding="5dp"
+                android:ellipsize="end"
+                android:maxLength="5"
+                android:maxLines="1"
                 android:text="目的地"
                 android:textColor="@color/white"
                 android:textSize="13.44sp"/>
@@ -134,6 +137,9 @@
                 android:layout_centerInParent="true"
                 android:drawableEnd="@drawable/icon_hotel_arrow_down_gray"
                 android:drawablePadding="5dp"
+                android:ellipsize="end"
+                android:maxLength="5"
+                android:maxLines="1"
                 android:text="推荐排序"
                 android:textColor="@color/white"
                 android:textSize="13.44sp"/>
@@ -158,6 +164,9 @@
                 android:layout_centerInParent="true"
                 android:drawableEnd="@drawable/icon_hotel_arrow_down_gray"
                 android:drawablePadding="5dp"
+                android:ellipsize="end"
+                android:maxLength="5"
+                android:maxLines="1"
                 android:text="酒店类型"
                 android:textColor="@color/white"
                 android:textSize="13.44sp"/>

@@ -9,6 +9,7 @@ public class BackHotelTypeLevel {
 
     private String paramCode; // 类型code
     private String paramName; // 类型名称
+    private boolean choice; // 是否被选择了，本地数据
 
     public String getParamCode() {
         return paramCode;
@@ -24,5 +25,13 @@ public class BackHotelTypeLevel {
 
     public void setParamName(String paramName) {
         this.paramName = paramName;
+    }
+
+    public boolean isChoice() {
+        return choice;
+    }
+
+    public void setChoice(boolean choice) {
+        this.choice = choice;
     }
 }

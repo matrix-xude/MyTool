@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:id="@+id/rl_item_hotel_sort">
+
+    <TextView
+        android:id="@+id/tv_item_hotel_sort_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:text="排序类型"
+        android:textColor="@color/white"
+        android:textSize="13.44sp"/>
+
+    <ImageView
+        android:id="@+id/iv_item_hotel_sort_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/icon_hotel_sort_check"/>
+</RelativeLayout>
