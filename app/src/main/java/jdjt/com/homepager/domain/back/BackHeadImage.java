@@ -12,8 +12,9 @@ public class BackHeadImage {
     private String linkUrl; //链接地址
     private String title; //图片标题
     private String refId; //关联id 如商品id,酒店id,业态id
-    private String parentTypeId; //一级类型id
-    private String childTypeId; //二级类型id
+    private String parentTypeId; //一级类型id  2酒店首页,3度假套餐首页,4MVM首页,5旅游首页,6猫超市首页,15猫玩乐首页
+    private String childTypeId; //二级类型id 7酒店,8商品,11一价全包,12特色,14线路
+    private String refType; //二级类型id 1酒店,2商品,3一价全包,4特色,5线路,6链接
 
     public String getImageUrl() {
         return imageUrl;
@@ -61,5 +62,13 @@ public class BackHeadImage {
 
     public void setChildTypeId(String childTypeId) {
         this.childTypeId = childTypeId;
+    }
+
+    public String getRefType() {
+        return refType;
+    }
+
+    public void setRefType(String refType) {
+        this.refType = refType;
     }
 }

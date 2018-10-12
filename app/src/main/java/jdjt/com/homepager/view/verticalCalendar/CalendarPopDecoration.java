@@ -1,21 +1,15 @@
-package jdjt.com.homepager.decoration;
+package jdjt.com.homepager.view.verticalCalendar;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.vondear.rxtool.RxImageTool;
 
 import java.util.List;
-
-import jdjt.com.homepager.view.verticalCalendar.CalendarData;
-import jdjt.com.homepager.view.verticalCalendar.CalendarDelegate;
-import jdjt.com.homepager.view.verticalCalendar.CalendarRecyclerView;
-import jdjt.com.homepager.view.verticalCalendar.CalendarUtil;
 
 /**
  * Created by xxd on 2018/9/5.

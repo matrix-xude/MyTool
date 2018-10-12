@@ -59,6 +59,7 @@ public class HotelCityFragment extends BaseFragment {
     private String type; // 1：热门目的地 2：热门度假区 3：大家都爱去
 
     private String mTitle; // 后台判断用，当前类型
+    private String mType; // 后台判断用，当前类型id
 
     @Override
     public int getLayoutId() {
@@ -110,7 +111,7 @@ public class HotelCityFragment extends BaseFragment {
             }
         }) {
             @Override
-            public void convert(ViewHolderRecycler holder, final PinyinItem pinyinItem, int position) {
+            public void convert(final ViewHolderRecycler holder, final PinyinItem pinyinItem, int position) {
                 if (pinyinItem.getType() == 0) {
                     holder.setText(R.id.tv_item_pinyin, pinyinItem.getName());
                     holder.setOnClickListener(R.id.tv_item_pinyin, new View.OnClickListener() {
@@ -118,6 +119,7 @@ public class HotelCityFragment extends BaseFragment {
                         public void onClick(View v) {
                             HotelDestination hotelDestination = new HotelDestination();
                             hotelDestination.setTitle(mTitle);
+                            hotelDestination.setType(mType);
                             BackChinaCity backChinaCity = (BackChinaCity) pinyinItem.getObject();
                             hotelDestination.setId(backChinaCity.getId());
                             hotelDestination.setName(backChinaCity.getRegionName());
@@ -152,7 +154,8 @@ public class HotelCityFragment extends BaseFragment {
                                 @Override
                                 public void onClick(View v) {
                                     HotelDestination hotelDestination = new HotelDestination();
-                                    hotelDestination.setTitle(hotCityItem.getTitle());
+                                    hotelDestination.setTitle(mTitle);
+                                    hotelDestination.setType(mType);
                                     hotelDestination.setId(backHotRecommendLevel.getRefId());
                                     hotelDestination.setName(backHotRecommendLevel.getName());
                                     backWithData(hotelDestination);
@@ -211,6 +214,7 @@ public class HotelCityFragment extends BaseFragment {
                     public List<PinyinItem> apply(Integer integer) throws Exception {
                         BackHotRecommend backHotRecommend = RequestHelperHomePager.getInstance().requestHotRecommendAll(type);
                         mTitle = backHotRecommend.getName();
+                        mType = backHotRecommend.getType();
                         List<PinyinItem> list = new ArrayList<>();
 
                         List<BackHotRecommendLevel> children = backHotRecommend.getChildren();

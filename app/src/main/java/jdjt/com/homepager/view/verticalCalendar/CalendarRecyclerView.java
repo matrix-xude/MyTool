@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jdjt.com.homepager.R;
-import jdjt.com.homepager.decoration.CalendarPopDecoration;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 

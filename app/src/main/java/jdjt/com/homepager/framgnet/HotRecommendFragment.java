@@ -96,6 +96,7 @@ public class HotRecommendFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         HotelDestination destination = new HotelDestination();
+                        destination.setType(hotRecommend.getType());
                         destination.setTitle(hotRecommend.getName());
                         destination.setId(backHotRecommendLevel.getRefId());
                         destination.setName(backHotRecommendLevel.getName());

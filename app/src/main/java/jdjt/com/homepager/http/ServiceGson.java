@@ -5,8 +5,12 @@ import jdjt.com.homepager.domain.back.BackBaseList;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
+import jdjt.com.homepager.domain.back.BackHotel;
+import jdjt.com.homepager.domain.back.BackHotelType;
 import jdjt.com.homepager.domain.back.BackMVMNew;
 import jdjt.com.homepager.domain.back.BackNavigation;
+import jdjt.com.homepager.domain.back.BackRecommendHotelType;
+import jdjt.com.homepager.domain.back.BackSearchHotel;
 import jdjt.com.homepager.domain.back.BackVacation;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -62,12 +66,12 @@ public interface ServiceGson {
     Call<BackBaseList<BackNavigation>> getHomePagerNavigation(@Path("type_id") String id);
 
     /**
-     * 所有顶部轮播图
+     * 所有顶部轮播图（改版）
      *
      * @param id
      * @return
      */
-    @GET("api/api/v1/m/banner/list/{type_id}")
+    @GET("api/api/v1/m/banner/listDetail/{type_id}")
     Call<BackBaseList<BackHeadImage>> getHeadImage(@Path("type_id") String id);
 
     /**
@@ -79,5 +83,35 @@ public interface ServiceGson {
     @GET("api/api/v1/news/{type_id}")
     Call<BackBaseList<BackMVMNew>> getMVMNew(@Path("type_id") String id);
 
+    /**
+     * 获取推荐的酒店类型
+     *
+     * @return
+     */
+    @POST("hotelbooking/reserve/search/getHotelType")
+    Call<BackBaseList<BackRecommendHotelType>> getRecommendHotelType();
+
+    /**
+     * 猜你喜欢酒店列表
+     *
+     * @return
+     */
+    @POST("hotelbooking/reserve/search/getRecommendHotelList")
+    Call<BackBaseList<BackHotel>> getRecommendHotel(@Body RequestBody body);
+
+    /**
+     * 获取所有酒店类型、排序
+     *
+     * @return
+     */
+    @POST("hotelbooking/reserve/serch/hotelChannelSerchIndustry")
+    Call<BackBaseList<BackHotelType>> getHotelType();
+
+    /**
+     * 条件查询酒店列表
+     * @return
+     */
+    @POST("hotelbooking/reserve/serch/hotelChannelSearch")
+    Call<BackBase<BackSearchHotel>> searchHotel(@Body RequestBody body);
 
 }
