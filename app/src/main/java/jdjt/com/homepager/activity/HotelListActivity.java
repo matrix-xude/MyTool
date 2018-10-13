@@ -32,6 +32,7 @@ import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.domain.HotelDestination;
 import jdjt.com.homepager.domain.HotelType;
 import jdjt.com.homepager.domain.back.BackHotelTypeLevel;
+import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
@@ -178,7 +179,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
             mSortList.add(level);
         }
         mTypeList = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 125; i++) {
             BackHotelTypeLevel level = new BackHotelTypeLevel();
             level.setParamName("类型*" + i);
             mTypeList.add(level);
@@ -374,10 +375,15 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
 
                     @Override
                     public void getChildView(View view, int layoutResId) {
+
                         final List<BackHotelTypeLevel> copyTypeData = copyTypeData();
                         // 确定、重置
                         TextView tvReset = view.findViewById(R.id.tv_pop_hotel_list_type_reset);
                         TextView tvConfirm = view.findViewById(R.id.tv_pop_hotel_list_type_confirm);
+
+                        int measuredHeight = tvReset.getMeasuredHeight();
+                        System.out.println("getLocationHeight:" + measuredHeight);
+
                         tvReset.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -410,10 +416,13 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                         // recycler
                         mAdapterHotelType = null;
                         int lineCount = 4;
+                        int itemHeight = RxImageTool.dp2px(30);
+                        int divide = RxImageTool.dp2px(10);
                         RecyclerView recyclerView = view.findViewById(R.id.recycler_pop_hotel_list_type);
                         GridLayoutManager manager = new GridLayoutManager(HotelListActivity.this, lineCount, GridLayoutManager.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
-                        mAdapterHotelType = new AdapterRecycler<BackHotelTypeLevel>(R.layout.item_hotel_type, copyTypeData) {
+                        mAdapterHotelType = new AdapterRecycler<BackHotelTypeLevel>(R.layout.item_hotel_type, copyTypeData,
+                                new AdapterRecycler.Builder().setItemHeight(itemHeight)) {
                             @Override
                             public void convert(ViewHolderRecycler holder, final BackHotelTypeLevel backHotelTypeLevel, final int position) {
                                 TextView tvName = holder.getView(R.id.tv_item_hotel_type_name);
@@ -435,7 +444,26 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                             }
                         };
                         recyclerView.setAdapter(mAdapterHotelType);
-                        recyclerView.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(10), lineCount, Color.TRANSPARENT));
+                        recyclerView.addItemDecoration(new CommonDecoration(divide, lineCount, Color.TRANSPARENT));
+
+                        // 计算recycler的最大高度
+
+                        int row = (mAdapterHotelType.getItemCount() + lineCount - 1) / lineCount;
+                        int divideCount = row - 1 > 0 ? row - 1 : 0;
+
+                        // 高度+padding
+                        int recyclerHeight = itemHeight * row + divide * divideCount + RxImageTool.dp2px(10 + 10);
+
+                        // 屏幕下方剩余的给recycler展示的最大高度
+                        int[] position2 = new int[2];
+                        v_divide_1.getLocationOnScreen(position2);
+                        int screenHeights = RxDeviceTool.getScreenHeights(HotelListActivity.this);
+                        // 2个控件的高度
+                        int maxLeftHeight = screenHeights - position2[1] - RxImageTool.dp2px(1 + 38);
+
+                        if (recyclerHeight > maxLeftHeight) {
+                            LayoutParamsUtil.setHeightPx(recyclerView, maxLeftHeight);
+                        }
                     }
                 })
                 .create();

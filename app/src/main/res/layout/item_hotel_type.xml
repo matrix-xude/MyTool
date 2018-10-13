@@ -8,14 +8,12 @@
     <TextView
         android:id="@+id/tv_item_hotel_type_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/shape_hotel_type_unchoice"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLength="5"
+        android:maxLength="6"
         android:maxLines="1"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
         android:text="酒店类型"
         android:textColor="@color/white"
         android:textSize="12.48sp"/>
