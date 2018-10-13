@@ -18,6 +18,7 @@ import jdjt.com.homepager.domain.back.BackHotRecommend;
 import jdjt.com.homepager.domain.back.BackHotRecommendLevel;
 import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
+import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
@@ -101,6 +102,7 @@ public class HotRecommendFragment extends BaseFragment {
                         destination.setId(backHotRecommendLevel.getRefId());
                         destination.setName(backHotRecommendLevel.getName());
                         // TODO 跳转到全部搜索页面
+                        ToastUtil.showToast(getActivity(),backHotRecommendLevel.getName());
                     }
                 });
             }

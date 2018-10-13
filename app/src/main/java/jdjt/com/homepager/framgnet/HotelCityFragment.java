@@ -132,7 +132,7 @@ public class HotelCityFragment extends BaseFragment {
                     holder.setText(R.id.tv_hot_city_title, hotCityItem.getTitle());
 
                     // 热门集合
-                    int lineCount = 4;
+                    int lineCount = "1".equals(type) ? 4 : 3;
                     int maxShowCount = 12;
                     int itemHeight = RxImageTool.dp2px(28);
                     int divide = RxImageTool.dp2px(5);

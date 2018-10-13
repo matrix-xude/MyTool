@@ -1,5 +1,7 @@
 package jdjt.com.homepager.adapter;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,7 +16,12 @@ import com.vondear.rxtool.view.RxToast;
 import java.util.List;
 
 import jdjt.com.homepager.R;
+import jdjt.com.homepager.activity.HotelListActivity;
+import jdjt.com.homepager.activity.HotelSecondActivity;
+import jdjt.com.homepager.domain.HotelType;
 import jdjt.com.homepager.domain.SimpleString;
+import jdjt.com.homepager.domain.back.BackRecommendHotelType;
+import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
 
 /**
@@ -23,10 +30,12 @@ import jdjt.com.homepager.util.LayoutParamsUtil;
 
 public class HotelSecondClassifyAdapter extends RecyclerView.Adapter<HotelSecondClassifyAdapter.ClassifyViewHolder> {
 
-    private List<SimpleString> dataList;
+    private List<BackRecommendHotelType> dataList;
     private int realShowNumber; // 实际显示的条目
+    private Activity activity;
 
-    public HotelSecondClassifyAdapter(List<SimpleString> dataList,int maxShowNumber) {
+    public HotelSecondClassifyAdapter(Activity activity, List<BackRecommendHotelType> dataList, int maxShowNumber) {
+        this.activity = activity;
         this.dataList = dataList;
         this.realShowNumber = (RxDataTool.isEmpty(dataList) ? 0 : dataList.size() < maxShowNumber ? dataList.size() : maxShowNumber) + 1;
     }
@@ -40,23 +49,30 @@ public class HotelSecondClassifyAdapter extends RecyclerView.Adapter<HotelSecond
 
     @Override
     public void onBindViewHolder(@NonNull ClassifyViewHolder holder, int position) {
-        final SimpleString simpleString = dataList.get(position);
 
-        holder.ivIcon.setImageResource(R.drawable.icon_hotel_type_all);
         if (position == realShowNumber - 1) {
             holder.tvName.setText("全部分类");
+            holder.ivIcon.setImageResource(R.drawable.icon_hotel_type_all);
             holder.rlClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RxToast.normal("全部分类");
+                    Intent intent = new Intent(activity, HotelListActivity.class);
+                    activity.startActivity(intent);
                 }
             });
         } else {
-            holder.tvName.setText(simpleString.getName());
+            final BackRecommendHotelType recommendHotelType = dataList.get(position);
+            holder.tvName.setText(recommendHotelType.getParamName() + "");
+            GlideLoadUtil.loadImage(activity, recommendHotelType.getImageUrl(), holder.ivIcon);
             holder.rlClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RxToast.normal(simpleString.getName());
+                    HotelType hotelType = new HotelType();
+                    hotelType.setId(recommendHotelType.getParamCode());
+                    hotelType.setName(recommendHotelType.getParamName());
+                    Intent intent = new Intent(activity, HotelListActivity.class);
+                    intent.putExtra("hotel_type", hotelType);
+                    activity.startActivity(intent);
                 }
             });
         }

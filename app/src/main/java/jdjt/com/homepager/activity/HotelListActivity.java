@@ -74,7 +74,8 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
     private boolean hasTime; // 是否已选择入离时间
     private boolean hasDestination; // 是否已选择目的地
     private boolean hasSort; // 是否已选择排序
-    private boolean hasType; // 是否已选择酒店类型
+    private boolean hasType; // 是否已选择过酒店类型
+    private boolean isTypeConfirm; // 是否已确定过酒店类型，如果确定，不再使用上个页面传入的数据
 
     private String mKeyword; // 关键字
     private String mStartDate; // 当前选择的起始日期
@@ -150,7 +151,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         if (hotelDestination != null) { // 带着目的地进入此页面
             hasDestination = true;
             mHotelDestination = hotelDestination;
-            setDateText();
+            setDestinationText();
         }
 
         // 初始化酒店类型
@@ -158,6 +159,15 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         if (hotelType != null) { // 带着目的地进入此页面
             hasType = true;
             mLastHotelType = hotelType;
+            setHotelTypeText();
+        }
+
+        // 初始化关键字
+        String keyword = intent.getStringExtra("keyword");
+        if (!RxDataTool.isEmpty(keyword)) {
+            hasKeyword = true;
+            mKeyword = keyword;
+            setKeywordText();
         }
 
         // 造数据
@@ -168,11 +178,14 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
             mSortList.add(level);
         }
         mTypeList = new ArrayList<>();
-        for (int i = 0; i < 125; i++) {
+        for (int i = 0; i < 25; i++) {
             BackHotelTypeLevel level = new BackHotelTypeLevel();
             level.setParamName("类型*" + i);
             mTypeList.add(level);
         }
+
+        // 根据所有初始化的条件查询酒店列表
+        refreshList();
     }
 
     // 刷新列表
@@ -188,10 +201,10 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                 onBackPressed();
                 break;
             case R.id.tv_hotel_list_search: // 跳转到酒店关键字页面
-                goToHotelSearch();
+                goToHotelSearch(true);
                 break;
-            case R.id.iv_hotel_list_text_clear: // 跳转到酒店关键字页面,并不在此时清空关键字
-                goToHotelSearch();
+            case R.id.iv_hotel_list_text_clear: // 跳转到酒店关键字页面,不带关键字
+                goToHotelSearch(false);
                 break;
             case R.id.rl_hotel_list_time: // 入离时间
                 popCalendar();
@@ -347,7 +360,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         popSort.showAsDropDown(v_divide_1);
     }
 
-    private AdapterRecycler adapter; // 酒店类型的adapter
+    private AdapterRecycler mAdapterHotelType; // 酒店类型的adapter
 
     // 弹出酒店类型选择框
     private void popHotelType() {
@@ -361,12 +374,46 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
 
                     @Override
                     public void getChildView(View view, int layoutResId) {
-                        adapter = null;
+                        final List<BackHotelTypeLevel> copyTypeData = copyTypeData();
+                        // 确定、重置
+                        TextView tvReset = view.findViewById(R.id.tv_pop_hotel_list_type_reset);
+                        TextView tvConfirm = view.findViewById(R.id.tv_pop_hotel_list_type_confirm);
+                        tvReset.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                clearTypeChoice(copyTypeData);
+                                if (mAdapterHotelType != null)
+                                    mAdapterHotelType.notifyDataSetChanged();
+                            }
+                        });
+                        tvConfirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTypeList = copyTypeData;
+                                isTypeConfirm = true; // 确认点击过了
+                                hasType = false;
+                                for (BackHotelTypeLevel level : mTypeList) {
+                                    if (level.isChoice()) {
+                                        hasType = true;
+                                        break;
+                                    }
+                                }
+                                setHotelTypeText();
+                                if (popHotelType != null && popHotelType.isShowing()) {
+                                    popHotelType.dismiss();
+                                    popHotelType = null;
+                                }
+                                refreshList();
+                            }
+                        });
+
+                        // recycler
+                        mAdapterHotelType = null;
                         int lineCount = 4;
                         RecyclerView recyclerView = view.findViewById(R.id.recycler_pop_hotel_list_type);
                         GridLayoutManager manager = new GridLayoutManager(HotelListActivity.this, lineCount, GridLayoutManager.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
-                        adapter = new AdapterRecycler<BackHotelTypeLevel>(R.layout.item_hotel_type, mTypeList) {
+                        mAdapterHotelType = new AdapterRecycler<BackHotelTypeLevel>(R.layout.item_hotel_type, copyTypeData) {
                             @Override
                             public void convert(ViewHolderRecycler holder, final BackHotelTypeLevel backHotelTypeLevel, final int position) {
                                 TextView tvName = holder.getView(R.id.tv_item_hotel_type_name);
@@ -382,12 +429,12 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                                     @Override
                                     public void onClick(View v) {
                                         backHotelTypeLevel.setChoice(!backHotelTypeLevel.isChoice());
-                                        adapter.notifyDataSetChanged();
+                                        mAdapterHotelType.notifyDataSetChanged();
                                     }
                                 });
                             }
                         };
-                        recyclerView.setAdapter(adapter);
+                        recyclerView.setAdapter(mAdapterHotelType);
                         recyclerView.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(10), lineCount, Color.TRANSPARENT));
                     }
                 })
@@ -407,6 +454,30 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                 getResources().getDrawable(R.drawable.icon_hotel_arrow_up_orange), null);
 
         popHotelType.showAsDropDown(v_divide_1);
+    }
+
+    // 复制酒店类型
+    private List<BackHotelTypeLevel> copyTypeData() {
+        if (mTypeList == null)
+            return null;
+        List<BackHotelTypeLevel> copyList = new ArrayList<>();
+        for (BackHotelTypeLevel level : mTypeList) {
+            BackHotelTypeLevel copy = new BackHotelTypeLevel();
+            copy.setChoice(level.isChoice());
+            copy.setParamCode(level.getParamCode());
+            copy.setParamName(level.getParamName());
+            copyList.add(copy);
+        }
+        return copyList;
+    }
+
+    // 清除酒店类型的所有已勾选
+    private void clearTypeChoice(List<BackHotelTypeLevel> list) {
+        if (RxDataTool.isEmpty(list))
+            return;
+        for (BackHotelTypeLevel level : list) {
+            level.setChoice(false);
+        }
     }
 
     // 设置入离日期文字
@@ -459,6 +530,17 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    // 设置关键字
+    private void setKeywordText() {
+        if (hasKeyword) {
+            tv_hotel_list_search.setText(mKeyword);
+            iv_hotel_list_text_clear.setVisibility(View.VISIBLE);
+        } else {
+            tv_hotel_list_search.setText(DEFAULT_SEARCH_HINT);
+            iv_hotel_list_text_clear.setVisibility(View.GONE);
+        }
+    }
+
 
     // 设置酒店类型
     private void setHotelTypeText() {
@@ -473,6 +555,8 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                         break;
                     }
                 }
+            } else if (!isTypeConfirm && mLastHotelType != null) {  // 没有点击过确定，并且上个页面传入的不为nul
+                tvType.setText(String.format("%s", mLastHotelType.getName()));
             }
         } else {
             tvType.setTextColor(getResources().getColor(R.color.white));
@@ -482,10 +566,14 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    // 跳转到酒店查询页面
-    private void goToHotelSearch() {
+    /**
+     * 跳转到酒店查询页面
+     *
+     * @param needKeyword 是否带上当前关键字
+     */
+    private void goToHotelSearch(boolean needKeyword) {
         Intent intent = new Intent(this, HotelSearchActivity.class);
-        if (hasKeyword && !RxDataTool.isEmpty(tv_hotel_list_search.getText().toString())) {
+        if (needKeyword && hasKeyword) {
             intent.putExtra("lastKeyword", mKeyword);
         }
         startActivityForResult(intent, TO_HOTEL_SEARCH_ACTIVITY);
@@ -505,14 +593,12 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
             if (RxDataTool.isEmpty(searchName)) {
                 hasKeyword = false;
                 mKeyword = null;
-                tv_hotel_list_search.setText(DEFAULT_SEARCH_HINT);
-                iv_hotel_list_text_clear.setVisibility(View.GONE);
+                setKeywordText();
                 refreshList();
             } else {
                 hasKeyword = true;
                 mKeyword = searchName;
-                tv_hotel_list_search.setText(mKeyword);
-                iv_hotel_list_text_clear.setVisibility(View.VISIBLE);
+                setKeywordText();
                 refreshList();
             }
         } else if (requestCode == TO_DESTINATION_ACTIVITY && resultCode == 1) { // 目的地页面

@@ -265,22 +265,35 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         recyclerView.setAdapter(new AdapterRecycler<BackVacationLevel>(layoutId, vacation.getDataList(),
                 new AdapterRecycler.Builder().setItemHeight(itemHeight).setMaxShowCount(maxShowCount)) {
             @Override
-            public void convert(ViewHolderRecycler holder, BackVacationLevel level, int position) {
+            public void convert(ViewHolderRecycler holder, final BackVacationLevel level, int position) {
                 if (type == 0) { // 度假套餐
                     holder.setText(R.id.tv_item_home_vacation_set_meal_name, level.getName() + "");
-                    holder.setText(R.id.tv_item_home_vacation_set_meal_price, level.getPrice() + "");
-                    holder.setText(R.id.tv_item_home_vacation_set_meal_save, level.getDiscountMoney() + "");
+                    holder.setText(R.id.tv_item_home_vacation_set_meal_price, "¥" + level.getPrice());
+                    holder.setText(R.id.tv_item_home_vacation_set_meal_save, "已节省¥" + RxDataTool.stringToInt(level.getDiscountMoney()));
                     ImageView ivBg = holder.getView(R.id.iv_item_home_vacation_set_meal_bg);
                     GlideLoadUtil.loadImage(getApplicationContext(), level.getImageUrl(), ivBg);
+                    holder.setOnClickListener(R.id.rl_item_home_holiday_set_meal, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO 度假套餐点击事件
+                            ToastUtil.showToast(getApplicationContext(), level.getName());
+                        }
+                    });
                 } else if (type == 1) { // 度假酒店
                     ImageView ivIcon = holder.getView(R.id.iv_item_hotel_icon);
                     GlideLoadUtil.loadImage(getApplicationContext(), level.getImageUrl(), ivIcon);
                     holder.setText(R.id.tv_item_hotel_name, level.getName() + "");
                     // TODO 还没返回address
-                    holder.setText(R.id.tv_item_hotel_address, level.getName() + "");
                     holder.setText(R.id.tv_item_hotel_grade, level.getGrade() + "分");
                     holder.setText(R.id.tv_item_hotel_people, RxDataTool.stringToInt(level.getHasChanged()) + "人已出游");
                     holder.setText(R.id.tv_item_hotel_price, "¥" + level.getPrice() + "起");
+                    holder.setOnClickListener(R.id.rl_item_hotel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO 酒店单体点击事件
+                            ToastUtil.showToast(getApplicationContext(), level.getName());
+                        }
+                    });
                 }
             }
         });
@@ -476,11 +489,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         } else if (backgroundType == 2) { // 色值
             if (!RxDataTool.isEmpty(typeContent)) {
                 rlNavigation.setBackgroundColor(Color.parseColor(typeContent));
-            } else {
-                rlNavigation.setBackgroundColor(getResources().getColor(R.color.moccasin));
             }
-        } else { // 不是图片，不是色值
-            rlNavigation.setBackgroundColor(getResources().getColor(R.color.lightsteelblue));
         }
 
         // 设置左侧大模块的文字、点击事件

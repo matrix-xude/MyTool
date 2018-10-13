@@ -26,7 +26,10 @@
                 <com.youth.banner.Banner
                     android:id="@+id/banner_hotel_second"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"/>
+                    android:layout_height="162dp"
+                    app:delay_time="6000"
+                    app:indicator_drawable_selected="@drawable/icon_pager_selected"
+                    app:indicator_drawable_unselected="@drawable/icon_pager_unselected"/>
 
                 <!--条件筛选-->
                 <android.support.v7.widget.CardView
@@ -73,7 +76,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_below="@id/tv_hotel_second_search_1"
                                     android:layout_marginTop="5dp"
-                                    android:text="青岛"
+                                    android:text="我的位置"
                                     android:textColor="@color/white"
                                     android:textSize="17.28sp"/>
                             </RelativeLayout>
@@ -239,23 +242,23 @@
 
             <!--分类-->
             <android.support.v7.widget.RecyclerView
-                android:layout_marginTop="5dp"
                 android:id="@+id/recycler_hotel_second_classify"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
 
             <View
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="7.7dp"
+                android:layout_marginTop="10dp"
                 android:background="#202123"/>
 
             <TextView
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/icon_title_decoration"
                 android:text="猜你喜欢"

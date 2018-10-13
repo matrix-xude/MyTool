@@ -10,15 +10,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp">
 
         <ImageView
             android:id="@+id/iv_item_hotel_second_classify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_centerHorizontal="true"
-            android:scaleType="centerInside"/>
+            android:scaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/tv_item_hotel_second_classify"

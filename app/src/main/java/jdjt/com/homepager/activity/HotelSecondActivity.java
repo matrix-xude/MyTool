@@ -19,23 +19,36 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxDeviceTool;
 import com.vondear.rxtool.RxImageTool;
 import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
-import java.util.ArrayList;
+import org.reactivestreams.Subscription;
+
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.adapter.HotelSecondClassifyAdapter;
 import jdjt.com.homepager.decoration.CommonDecoration;
-import jdjt.com.homepager.domain.SimpleString;
+import jdjt.com.homepager.domain.HotelDestination;
+import jdjt.com.homepager.domain.back.BackHeadImage;
+import jdjt.com.homepager.domain.back.BackHotel;
+import jdjt.com.homepager.domain.back.BackRecommendHotelType;
+import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
+import jdjt.com.homepager.http.requestHelper.RequestHelperHotel;
+import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
-import jdjt.com.homepager.util.MakeDataUtil;
 import jdjt.com.homepager.util.StatusBarUtil;
+import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
@@ -61,6 +74,7 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
 
     // 圆角查询条件中所有控件
     private RelativeLayout rlDestination; // 目的地
+    private TextView tvDestination; // 目的地
     private RelativeLayout rlLocation; // 定位按钮
     private LinearLayout llTime; // 入离时间
     private TextView tvCheckIn;
@@ -77,10 +91,15 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
     private String mEndDate;
     private boolean isSelected; // 是否选择过了日历
 
-    private CommonPopupWindow popupWindow;
+    private boolean hasDestination; // 是否已选择目的地
+    private HotelDestination mHotelDestination; // 目的地
+
+    private boolean hasKeyword; // 是否已填写关键字
+    private String mKeyword; // 关键字
+
+    private CommonPopupWindow popCalendar;
     private Handler handler = new Handler() {
     };
-
 
     private final static int mHeadDp = 40; // 头的高度，不包含导航栏
     private final static int mHeadBannerDp = 180; // 头图banner高度
@@ -135,10 +154,10 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
 
         iv_hotel_second_back.setOnClickListener(this);
 
-        initBanner();
+        requestHeadBanner();
         initSearchModule();
-        refreshClassifyModule();
-        refreshHolidayHotel();
+        requestRecommendHotelType();
+        requestRecommendHotel();
     }
 
     /**
@@ -147,6 +166,7 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
     private void initSearchModule() {
 
         rlDestination = findViewById(R.id.rl_hotel_second_search_destination); // 目的地
+        tvDestination = findViewById(R.id.tv_hotel_second_search_destination); // 目的地
         rlDestination.setOnClickListener(this);
 
         rlLocation = findViewById(R.id.rl_hotel_second_search_location); // 定位按钮
@@ -174,7 +194,7 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
     /**
      * 刷新酒店分类页面
      */
-    private void refreshClassifyModule() {
+    private void refreshClassifyModule(List<BackRecommendHotelType> list) {
         int maxShowNumber = 7;  // 最后显示的item,之后添加全部分类
         int spanCount = 4; // 一行显示几个
 
@@ -186,17 +206,18 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
             }
         };
         recyclerClassify.setLayoutManager(gridLayoutManager);
-        recyclerClassify.setAdapter(new HotelSecondClassifyAdapter(MakeDataUtil.makeClassifyString(), maxShowNumber));
+        recyclerClassify.setAdapter(new HotelSecondClassifyAdapter(this, list, maxShowNumber));
     }
 
     /**
      * 刷新猜你喜欢模块
      */
-    private void refreshHolidayHotel() {
+    private void refreshHolidayHotel(List<BackHotel> list) {
+        if (RxDataTool.isEmpty(list))
+            return;
 
         int maxShowNumber = 10;
         int divide = RxImageTool.dp2px(0.48f);
-        List<SimpleString> list = MakeDataUtil.makeSimpleString(11);
 
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
@@ -205,20 +226,33 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
             }
         };
         recyclerLike.setLayoutManager(manager);
-        recyclerLike.setAdapter(new AdapterRecycler<SimpleString>(R.layout.item_hotel, list,
+        recyclerLike.setAdapter(new AdapterRecycler<BackHotel>(R.layout.item_hotel, list,
                 new AdapterRecycler.Builder().setMaxShowCount(maxShowNumber)) {
             @Override
-            public void convert(ViewHolderRecycler holder, SimpleString simpleString, int position) {
-                holder.setText(R.id.tv_item_hotel_name, simpleString.getName());
+            public void convert(ViewHolderRecycler holder, final BackHotel backHotel, int position) {
+                ImageView ivIcon = holder.getView(R.id.iv_item_hotel_icon);
+                GlideLoadUtil.loadImage(getApplicationContext(), backHotel.getHotelHeadImage(), ivIcon);
+                holder.setText(R.id.tv_item_hotel_name, backHotel.getHotelName() + "");
+                holder.setText(R.id.tv_item_hotel_address, backHotel.getHotelAddress() + "");
+                holder.setText(R.id.tv_item_hotel_grade, backHotel.getHotelScore() + "分");
+                holder.setText(R.id.tv_item_hotel_people, RxDataTool.stringToInt(backHotel.getScoreCount()) + "人出游");
+                holder.setText(R.id.tv_item_hotel_price, "¥" + backHotel.getRoomTypePriceMin() + "起");
+                holder.setOnClickListener(R.id.rl_item_hotel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO 酒店单体点击事件
+                        ToastUtil.showToast(getApplicationContext(), backHotel.getHotelName() + "");
+                    }
+                });
             }
         });
-        recyclerLike.addItemDecoration(new CommonDecoration(divide,1, Color.parseColor("#3E3F41")));
+        recyclerLike.addItemDecoration(new CommonDecoration(divide, 1, Color.parseColor("#3E3F41")));
     }
 
     // 弹出日历选择框
     private void popCalendar() {
         int screenHeight = RxDeviceTool.getScreenHeight(this);
-        popupWindow = new CommonPopupWindow.Builder(this)
+        popCalendar = new CommonPopupWindow.Builder(this)
                 .setView(R.layout.pop_calendar)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, screenHeight * 4 / 5)
                 .setBackGroundLevel(0.5f)
@@ -231,9 +265,9 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
                         ivClose.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (popupWindow != null && popupWindow.isShowing()) {
-                                    popupWindow.dismiss();
-                                    popupWindow = null;
+                                if (popCalendar != null && popCalendar.isShowing()) {
+                                    popCalendar.dismiss();
+                                    popCalendar = null;
                                 }
                             }
                         });
@@ -254,9 +288,9 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
                                         mStartDate = start.toString();
                                         mEndDate = end.toString();
                                         setDateText(mStartDate, mEndDate);
-                                        if (popupWindow != null && popupWindow.isShowing()) {
-                                            popupWindow.dismiss();
-                                            popupWindow = null;
+                                        if (popCalendar != null && popCalendar.isShowing()) {
+                                            popCalendar.dismiss();
+                                            popCalendar = null;
                                         }
                                     }
                                 }, 500);
@@ -265,7 +299,7 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
                     }
                 })
                 .create();
-        popupWindow.showAtLocation(rl_hotel_second_parent, Gravity.BOTTOM, 0, 0);
+        popCalendar.showAtLocation(rl_hotel_second_parent, Gravity.BOTTOM, 0, 0);
     }
 
     // 设置显示时间
@@ -278,18 +312,21 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
         tvDayCount.setText(dayCount + "晚");
     }
 
-    // 初始化自动滑动的头图
-    private void initBanner() {
-        List<Integer> list = new ArrayList<>();
-        list.add(R.drawable.bg2);
-        list.add(R.drawable.bg1);
-        list.add(R.drawable.bg4);
-        list.add(R.drawable.bg3);
-        list.add(R.drawable.bg5);
-        MyImageLoader imageLoader = new MyImageLoader();
 
+    // 刷新头图
+    private void refreshHeadBanner(final List<BackHeadImage> list) {
+        if (list == null)
+            return;
+
+        MyImageLoader imageLoader = new MyImageLoader();
         banner_hotel_second.setImages(list)
                 .setImageLoader(imageLoader)
+                .setOnBannerListener(new OnBannerListener() {
+                    @Override
+                    public void OnBannerClick(int position) {
+                        ToastUtil.showToast(getApplicationContext(), list.get(position).getTitle() + "");
+                    }
+                })
                 .start();
     }
 
@@ -297,8 +334,8 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            Integer id = (Integer) path;
-            Glide.with(getApplicationContext()).load(id).into(imageView);
+            BackHeadImage backHeadImage = (BackHeadImage) path;
+            GlideLoadUtil.loadImage(getApplicationContext(), backHeadImage.getImageUrl(), imageView);
         }
     }
 
@@ -307,9 +344,44 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_KEYWORD && resultCode == 1) {
             String searchName = data.getStringExtra("searchName");
-            tvKeyword.setText(searchName);
+            if (RxDataTool.isEmpty(searchName)) {
+                hasKeyword = false;
+                mKeyword = null;
+            } else {
+                hasKeyword = true;
+                mKeyword = searchName;
+            }
+            setKeywordText();
         } else if (requestCode == REQUEST_CODE_DESTINATION && resultCode == 1) {
+            HotelDestination hotelDestination = (HotelDestination) data.getSerializableExtra("destination");
+            if (hotelDestination == null) {
+                hasDestination = false;
+                mHotelDestination = null;
+            } else {
+                hasDestination = true;
+                mHotelDestination = hotelDestination;
+                setDestinationText();
+            }
+        }
+    }
 
+    // 设置目的地
+    private void setDestinationText() {
+        if (hasDestination) {
+            tvDestination.setText(mHotelDestination.getName());
+        } else {
+            tvDestination.setText("我的位置");
+        }
+    }
+
+    // 设置关键字
+    private void setKeywordText() {
+        if (hasKeyword) {
+            tvKeyword.setTextColor(Color.WHITE);
+            tvKeyword.setText(mKeyword);
+        } else {
+            tvKeyword.setTextColor(Color.parseColor("#A4A4A4"));
+            tvKeyword.setText("关键字/位置/酒店名");
         }
     }
 
@@ -330,11 +402,108 @@ public class HotelSecondActivity extends BaseActivity implements View.OnClickLis
                 popCalendar();
                 break;
             case R.id.tv_hotel_second_search_keyword: // 关键字
-                Intent intent2 = new Intent(HotelSecondActivity.this, HotelSearchActivity.class);
+                Intent intent2 = new Intent(this, HotelSearchActivity.class);
                 startActivityForResult(intent2, REQUEST_CODE_KEYWORD);
                 break;
             case R.id.tv_hotel_second_search_query: // 查询按钮
+                if (!hasDestination) {
+                    ToastUtil.showToast(this, "请选择目的地");
+                    return;
+                }
+                Intent intent3 = new Intent(this, HotelListActivity.class);
+                if (hasDestination)
+                    intent3.putExtra("destination", mHotelDestination);
+                intent3.putExtra("startDate", mStartDate);
+                intent3.putExtra("endDate", mEndDate);
+                if (hasKeyword)
+                    intent3.putExtra("keyword", mKeyword);
+                startActivity(intent3);
                 break;
         }
+    }
+
+    private void requestHeadBanner() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackHeadImage>>() {
+                    @Override
+                    public List<BackHeadImage> apply(Integer integer) throws Exception {
+                        return RequestHelperHomePager.getInstance().requestHeadImage("2");
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackHeadImage>>() {
+                    @Override
+                    public void accept(List<BackHeadImage> backHeadImageList) throws Exception {
+                        refreshHeadBanner(backHeadImageList);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
+    }
+
+    private void requestRecommendHotelType() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackRecommendHotelType>>() {
+                    @Override
+                    public List<BackRecommendHotelType> apply(Integer integer) throws Exception {
+                        return RequestHelperHotel.getInstance().requestRecommendHotelType();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackRecommendHotelType>>() {
+                    @Override
+                    public void accept(List<BackRecommendHotelType> backRecommendHotelTypes) throws Exception {
+                        refreshClassifyModule(backRecommendHotelTypes);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        refreshClassifyModule(null);
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
+    }
+
+    private void requestRecommendHotel() {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackHotel>>() {
+                    @Override
+                    public List<BackHotel> apply(Integer integer) throws Exception {
+                        return RequestHelperHotel.getInstance().requestRecommendHotel(mStartDate, mEndDate, mKeyword);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackHotel>>() {
+                    @Override
+                    public void accept(List<BackHotel> backHotels) throws Exception {
+                        refreshHolidayHotel(backHotels);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
     }
 }

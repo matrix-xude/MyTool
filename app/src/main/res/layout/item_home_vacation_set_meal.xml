@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:background="#33000000"
         android:padding="6dp"
         android:textColor="@color/white"
         android:textSize="13.44sp"/>
@@ -36,17 +37,22 @@
 
             <TextView
                 android:id="@+id/tv_item_home_vacation_set_meal_price"
-                android:layout_width="58.55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:background="#F39800"
                 android:gravity="center"
+                android:minWidth="58.55dp"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
                 android:textColor="@color/white"
                 android:textSize="14.4sp"/>
 
             <TextView
                 android:id="@+id/tv_item_home_vacation_set_meal_save"
-                android:layout_width="58.55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="24dp"
+                android:layout_alignEnd="@id/tv_item_home_vacation_set_meal_price"
+                android:layout_alignStart="@id/tv_item_home_vacation_set_meal_price"
                 android:layout_below="@id/tv_item_home_vacation_set_meal_price"
                 android:background="#666666"
                 android:gravity="center"

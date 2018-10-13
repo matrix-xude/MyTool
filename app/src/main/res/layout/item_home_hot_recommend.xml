@@ -22,7 +22,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bg_title"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="14.4sp"/>
     </RelativeLayout>
