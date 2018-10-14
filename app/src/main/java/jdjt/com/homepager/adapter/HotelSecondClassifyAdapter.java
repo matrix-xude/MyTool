@@ -11,18 +11,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.vondear.rxtool.RxDataTool;
-import com.vondear.rxtool.view.RxToast;
 
 import java.util.List;
 
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.activity.HotelListActivity;
-import jdjt.com.homepager.activity.HotelSecondActivity;
 import jdjt.com.homepager.domain.HotelType;
-import jdjt.com.homepager.domain.SimpleString;
 import jdjt.com.homepager.domain.back.BackRecommendHotelType;
 import jdjt.com.homepager.util.GlideLoadUtil;
-import jdjt.com.homepager.util.LayoutParamsUtil;
 
 /**
  * Created by xxd on 2018/9/5.
