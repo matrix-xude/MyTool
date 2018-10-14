@@ -17,20 +17,20 @@ import jdjt.com.homepager.R;
  * 自带删除按钮的edittext
  */
 
-public class ClearEditText extends AppCompatEditText implements View.OnFocusChangeListener, TextWatcher {
+public class ClearNewEditText extends AppCompatEditText implements View.OnFocusChangeListener, TextWatcher {
     //EditText右侧的删除按钮
     private Drawable mClearDrawable;
     private boolean hasFoucs;
 
-    public ClearEditText(Context context) {
+    public ClearNewEditText(Context context) {
         this(context, null);
     }
 
-    public ClearEditText(Context context, AttributeSet attrs) {
+    public ClearNewEditText(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.editTextStyle);
     }
 
-    public ClearEditText(Context context, AttributeSet attrs, int defStyle) {
+    public ClearNewEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }

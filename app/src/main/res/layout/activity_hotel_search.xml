@@ -21,7 +21,7 @@
             android:layout_weight="1"
             app:cardCornerRadius="15dp">
 
-            <jdjt.com.homepager.view.ClearEditText
+            <jdjt.com.homepager.view.ClearNewEditText
                 android:id="@+id/et_hotel_search"
                 android:layout_width="match_parent"
                 android:layout_height="29.75dp"

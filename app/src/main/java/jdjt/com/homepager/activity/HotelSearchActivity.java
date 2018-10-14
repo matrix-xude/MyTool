@@ -28,7 +28,7 @@ import co.lujun.androidtagview.TagView;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.util.StatusBarUtil;
-import jdjt.com.homepager.view.ClearEditText;
+import jdjt.com.homepager.view.ClearNewEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
@@ -39,7 +39,7 @@ import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 public class HotelSearchActivity extends BaseActivity implements View.OnClickListener {
 
-    private ClearEditText et_hotel_search;
+    private ClearNewEditText et_hotel_search;
     private TextView tv_hotel_search_back;
     private ImageView iv_hotel_search_history_delete;
     private TagContainerLayout tagHistory;

@@ -30,7 +30,7 @@ import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.framgnet.HotelCityFragment;
 import jdjt.com.homepager.util.StatusBarUtil;
-import jdjt.com.homepager.view.ClearEditText;
+import jdjt.com.homepager.view.ClearNewEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
@@ -42,7 +42,7 @@ import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 public class HotelDestinationActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageView iv_hotel_destination_back; // 返回
-    private ClearEditText et_hotel_destination; // 搜索框
+    private ClearNewEditText et_hotel_destination; // 搜索框
     private LinearLayout ll_hotel_destination_tab; // tab父类
     private TextView tv_hotel_destination_current_city; // 当前城市
     private TextView tv_hotel_destination_location; // 重新定位
