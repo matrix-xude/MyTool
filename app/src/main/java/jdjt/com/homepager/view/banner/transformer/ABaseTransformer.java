@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.youth.banner.transformer;
+package jdjt.com.homepager.view.banner.transformer;
 
 import android.support.v4.view.ViewPager.PageTransformer;
 import android.view.View;

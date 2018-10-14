@@ -1,24 +1,25 @@
-package com.youth.banner;
+package jdjt.com.homepager.view.banner;
 
 import android.support.v4.view.ViewPager.PageTransformer;
 
-import com.youth.banner.transformer.AccordionTransformer;
-import com.youth.banner.transformer.BackgroundToForegroundTransformer;
-import com.youth.banner.transformer.CubeInTransformer;
-import com.youth.banner.transformer.CubeOutTransformer;
-import com.youth.banner.transformer.DefaultTransformer;
-import com.youth.banner.transformer.DepthPageTransformer;
-import com.youth.banner.transformer.FlipHorizontalTransformer;
-import com.youth.banner.transformer.FlipVerticalTransformer;
-import com.youth.banner.transformer.ForegroundToBackgroundTransformer;
-import com.youth.banner.transformer.RotateDownTransformer;
-import com.youth.banner.transformer.RotateUpTransformer;
-import com.youth.banner.transformer.ScaleInOutTransformer;
-import com.youth.banner.transformer.StackTransformer;
-import com.youth.banner.transformer.TabletTransformer;
-import com.youth.banner.transformer.ZoomInTransformer;
-import com.youth.banner.transformer.ZoomOutSlideTransformer;
-import com.youth.banner.transformer.ZoomOutTranformer;
+import jdjt.com.homepager.view.banner.transformer.AccordionTransformer;
+import jdjt.com.homepager.view.banner.transformer.BackgroundToForegroundTransformer;
+import jdjt.com.homepager.view.banner.transformer.CubeInTransformer;
+import jdjt.com.homepager.view.banner.transformer.CubeOutTransformer;
+import jdjt.com.homepager.view.banner.transformer.DefaultTransformer;
+import jdjt.com.homepager.view.banner.transformer.DepthPageTransformer;
+import jdjt.com.homepager.view.banner.transformer.FlipHorizontalTransformer;
+import jdjt.com.homepager.view.banner.transformer.FlipVerticalTransformer;
+import jdjt.com.homepager.view.banner.transformer.ForegroundToBackgroundTransformer;
+import jdjt.com.homepager.view.banner.transformer.RotateDownTransformer;
+import jdjt.com.homepager.view.banner.transformer.RotateUpTransformer;
+import jdjt.com.homepager.view.banner.transformer.ScaleInOutTransformer;
+import jdjt.com.homepager.view.banner.transformer.StackTransformer;
+import jdjt.com.homepager.view.banner.transformer.TabletTransformer;
+import jdjt.com.homepager.view.banner.transformer.ZoomInTransformer;
+import jdjt.com.homepager.view.banner.transformer.ZoomOutSlideTransformer;
+import jdjt.com.homepager.view.banner.transformer.ZoomOutTranformer;
+
 
 public class Transformer {
     public static Class<? extends PageTransformer> Default = DefaultTransformer.class;

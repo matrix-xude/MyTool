@@ -1,4 +1,4 @@
-package com.youth.banner;
+package jdjt.com.homepager.view.banner;
 
 import android.content.Context;
 import android.view.animation.Interpolator;

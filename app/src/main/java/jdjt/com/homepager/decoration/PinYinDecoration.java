@@ -6,15 +6,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.vondear.rxtool.RxImageTool;
 
 import java.util.List;
 
 import jdjt.com.homepager.domain.PinyinItem;
-
-import static com.youth.banner.BannerConfig.TITLE_TEXT_COLOR;
 
 /**
  * Created by xxd on 2018/9/5.

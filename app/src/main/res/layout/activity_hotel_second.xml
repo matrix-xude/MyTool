@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content">
 
                 <!--头图-->
-                <com.youth.banner.Banner
+                <jdjt.com.homepager.view.banner.Banner
                     android:id="@+id/banner_hotel_second"
                     android:layout_width="match_parent"
                     android:layout_height="162dp"

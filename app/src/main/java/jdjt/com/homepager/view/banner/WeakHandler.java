@@ -1,4 +1,4 @@
-package com.youth.banner;
+package jdjt.com.homepager.view.banner;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -351,13 +351,13 @@ public class WeakHandler {
     }
 
     private static class ExecHandler extends Handler {
-        private final WeakReference<Handler.Callback> mCallback;
+        private final WeakReference<Callback> mCallback;
 
         ExecHandler() {
             mCallback = null;
         }
 
-        ExecHandler(WeakReference<Handler.Callback> callback) {
+        ExecHandler(WeakReference<Callback> callback) {
             mCallback = callback;
         }
 
@@ -366,7 +366,7 @@ public class WeakHandler {
             mCallback = null;
         }
 
-        ExecHandler(Looper looper, WeakReference<Handler.Callback> callback) {
+        ExecHandler(Looper looper, WeakReference<Callback> callback) {
             super(looper);
             mCallback = callback;
         }

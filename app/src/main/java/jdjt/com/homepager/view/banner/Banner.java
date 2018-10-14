@@ -1,8 +1,7 @@
-package com.youth.banner;
+package jdjt.com.homepager.view.banner;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -21,14 +20,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.youth.banner.listener.OnBannerClickListener;
-import com.youth.banner.listener.OnBannerListener;
-import com.youth.banner.loader.ImageLoaderInterface;
-import com.youth.banner.view.BannerViewPager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import jdjt.com.homepager.R;
+import jdjt.com.homepager.view.banner.listener.OnBannerClickListener;
+import jdjt.com.homepager.view.banner.listener.OnBannerListener;
+import jdjt.com.homepager.view.banner.loader.ImageLoaderInterface;
+import jdjt.com.homepager.view.banner.view.BannerViewPager;
 
 import static android.support.v4.view.ViewPager.OnPageChangeListener;
 import static android.support.v4.view.ViewPager.PageTransformer;
@@ -295,7 +296,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
     }
 
     private void setBannerStyleUI() {
-        int visibility =count > 1 ? View.VISIBLE :View.GONE;
+        int visibility =count > 1 ? View.VISIBLE : View.GONE;
         switch (bannerStyle) {
             case BannerConfig.CIRCLE_INDICATOR:
                 indicator.setVisibility(visibility);

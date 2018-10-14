@@ -1,4 +1,4 @@
-package com.youth.banner.loader;
+package jdjt.com.homepager.view.banner.loader;
 
 import android.content.Context;
 import android.view.View;

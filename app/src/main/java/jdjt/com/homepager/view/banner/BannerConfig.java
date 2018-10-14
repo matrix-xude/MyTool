@@ -1,4 +1,4 @@
-package com.youth.banner;
+package jdjt.com.homepager.view.banner;
 
 
 public class BannerConfig {
