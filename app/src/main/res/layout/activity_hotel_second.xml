@@ -229,7 +229,7 @@
                                 android:id="@+id/tv_hotel_second_search_query"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/orange"
+                                android:background="@color/bg_light"
                                 android:gravity="center"
                                 android:padding="6dp"
                                 android:text="查询"
