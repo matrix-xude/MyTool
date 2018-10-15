@@ -111,7 +111,7 @@ public interface ServiceGson {
      * 条件查询酒店列表
      * @return
      */
-    @POST("hotelbooking/reserve/serch/hotelChannelSearch")
+    @POST("hotelbooking/reserve/search/hotelChannelSearch")
     Call<BackBase<BackSearchHotel>> searchHotel(@Body RequestBody body);
 
 }

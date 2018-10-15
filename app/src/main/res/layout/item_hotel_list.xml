@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_item_hotel_detail"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_content"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_item_hotel_detail_icon"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        app:cardCornerRadius="5dp">
+
+        <ImageView
+            android:id="@+id/iv_item_hotel_detail_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cv_item_hotel_detail_icon"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/cv_item_hotel_detail_icon"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_item_hotel_detail_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/icon_hotel_map"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_toStartOf="@id/iv_item_hotel_detail_map">
+
+                <TextView
+                    android:id="@+id/tv_item_search_hotel_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="酒店名称"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_item_search_hotel_name"
+                    android:layout_marginTop="5dp">
+
+                    <ImageView
+                        android:id="@+id/iv_item_hotel_detail_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:src="@drawable/icon_hotel_address_decoration"/>
+
+                    <TextView
+                        android:id="@+id/tv_item_hotel_detail_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/iv_item_hotel_detail_address"
+                        android:text="地址"
+                        android:textColor="#D2D2D3"
+                        android:textSize="14sp"/>
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_call_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/icon_hotel_call_oragne"
+                android:text="呼叫服务"
+                android:textColor="@color/bg_light"
+                android:textSize="11.52sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_call_unlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/icon_hotel_call_gary"
+                android:text="呼叫服务"
+                android:textColor="#A8A8A8"
+                android:textSize="11.52sp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_3d_map_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/icon_hotel_3d_map_orange"
+                android:text="3D地图"
+                android:textColor="@color/bg_light"
+                android:textSize="11.52sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_3d_map_unlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/icon_hotel_3d_map_gray"
+                android:text="3D地图"
+                android:textColor="#A8A8A8"
+                android:textSize="11.52sp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_wifi_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="免费WiFi"
+                android:textColor="@color/bg_light"
+                android:textSize="11.52sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_wifi_unlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="免费WiFi"
+                android:textColor="#A8A8A8"
+                android:textSize="11.52sp"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5.0分"
+                android:textColor="@color/bg_light"
+                android:textSize="14.4sp"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/tv_item_hotel_detail_score"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/tv_item_hotel_detail_score"
+                android:text="0条点评"
+                android:textColor="#D2D2D3"
+                android:textSize="11.52sp"/>
+
+            <ImageView
+                android:id="@+id/iv_item_hotel_detail_gift"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/tv_item_hotel_detail_score"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/tv_item_hotel_detail_comment_count"
+                android:src="@drawable/icon_hotel_gift"/>
+
+            <TextView
+                android:id="@+id/tv_item_hotel_detail_price_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/tv_item_hotel_detail_score"
+                android:layout_alignParentEnd="true"
+                android:text="¥900起"
+                android:textColor="#F37400"
+                android:textSize="14.4sp"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

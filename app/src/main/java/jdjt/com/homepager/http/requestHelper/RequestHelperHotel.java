@@ -130,11 +130,13 @@ public class RequestHelperHotel {
         send.setParamTypeList(list);
         if (destination != null) { // 目的地
             SendHotelSearchLevel1 level1 = new SendHotelSearchLevel1(); // 第一级数据
+            list.add(level1);
             level1.setParamType("2");
             List<SendHotelSearchLevel2> list2 = new ArrayList<>();
             level1.setParamContent(list2);
 
             SendHotelSearchLevel2 level2 = new SendHotelSearchLevel2(); // 第二级数据
+            list2.add(level2);
             level2.setTitle(destination.getTitle());
             List<SendHotelSearchLevel3> list3 = new ArrayList<>();
             level2.setContent(list3);
@@ -146,11 +148,13 @@ public class RequestHelperHotel {
         }
         if (sort != null) {  // 排序
             SendHotelSearchLevel1 level1 = new SendHotelSearchLevel1(); // 第一级数据
+            list.add(level1);
             level1.setParamType("3");
             List<SendHotelSearchLevel2> list2 = new ArrayList<>();
             level1.setParamContent(list2);
 
             SendHotelSearchLevel2 level2 = new SendHotelSearchLevel2(); // 第二级数据
+            list2.add(level2);
             List<SendHotelSearchLevel3> list3 = new ArrayList<>();
             level2.setContent(list3);
 
@@ -161,11 +165,13 @@ public class RequestHelperHotel {
         }
         if (typeList != null && typeList.size() != 0) {  // 类型
             SendHotelSearchLevel1 level1 = new SendHotelSearchLevel1(); // 第一级数据
+            list.add(level1);
             level1.setParamType("4");
             List<SendHotelSearchLevel2> list2 = new ArrayList<>();
             level1.setParamContent(list2);
 
             SendHotelSearchLevel2 level2 = new SendHotelSearchLevel2(); // 第二级数据
+            list2.add(level2);
             level2.setTitle("酒店类型");
             List<SendHotelSearchLevel3> list3 = new ArrayList<>();
             level2.setContent(list3);
