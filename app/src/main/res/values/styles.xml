@@ -31,10 +31,10 @@
 
 
     <declare-styleable name="PinYinSideBar">
-        <attr name="letterSize" format="dimension" />
-        <attr name="letterColor" format="color" />
-        <attr name="focusLetterColor" format="color" />
-        <attr name="letterSpacingExtra" format="float" />
+        <attr name="pinyin_letterSize" format="dimension" />
+        <attr name="pinyin_letterColor" format="color" />
+        <attr name="pinyin_focusLetterColor" format="color" />
+        <attr name="pinyin_letterSpacingExtra" format="float" />
     </declare-styleable>
 
 </resources>

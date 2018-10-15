@@ -73,7 +73,6 @@ public class HotelCityFragment extends BaseFragment {
         initData();
     }
 
-
     private void initView() {
         recycler_fragment_hotel_city = view.findViewById(R.id.recycler_fragment_hotel_city);
         pinyin_side_bar_fragment_hotel_city = view.findViewById(R.id.pinyin_side_bar_fragment_hotel_city);

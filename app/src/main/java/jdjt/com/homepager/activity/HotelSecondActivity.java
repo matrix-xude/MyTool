@@ -22,9 +22,6 @@ import android.widget.TextView;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxDeviceTool;
 import com.vondear.rxtool.RxImageTool;
-import com.youth.banner.Banner;
-import com.youth.banner.listener.OnBannerListener;
-import com.youth.banner.loader.ImageLoader;
 
 import org.reactivestreams.Subscription;
 
@@ -49,6 +46,9 @@ import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.util.ToastUtil;
+import jdjt.com.homepager.view.banner.Banner;
+import jdjt.com.homepager.view.banner.listener.OnBannerListener;
+import jdjt.com.homepager.view.banner.loader.ImageLoader;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;

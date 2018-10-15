@@ -31,7 +31,7 @@
             android:alpha="0.8"
             app:cardCornerRadius="15dp">
 
-            <jdjt.com.homepager.view.ClearEditText
+            <jdjt.com.homepager.view.ClearNewEditText
                 android:id="@+id/et_hotel_destination"
                 android:layout_width="match_parent"
                 android:layout_height="29.75dp"
