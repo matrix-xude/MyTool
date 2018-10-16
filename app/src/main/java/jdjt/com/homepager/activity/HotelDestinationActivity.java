@@ -1,6 +1,7 @@
 package jdjt.com.homepager.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,13 +24,26 @@ import android.widget.TextView;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxImageTool;
 
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
+import jdjt.com.homepager.domain.HotelDestination;
+import jdjt.com.homepager.domain.back.BackCitySearch;
+import jdjt.com.homepager.domain.back.BackVacation;
 import jdjt.com.homepager.framgnet.HotelCityFragment;
+import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
+import jdjt.com.homepager.http.requestHelper.RequestHelperSearch;
 import jdjt.com.homepager.util.StatusBarUtil;
+import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.ClearNewEditText;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
@@ -57,8 +71,8 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
     private HotelCityFragment scenicFragment;
 
     private int mCurrentTabIndex = -1; // 当前条目
-    private AdapterRecycler<String> mAdapter;
-    private List<String> dataList;
+    private AdapterRecycler<BackCitySearch> mAdapter;
+    private List<BackCitySearch> mDataList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +101,8 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
         rlHoliday.setOnClickListener(this);
         rlScenic.setOnClickListener(this);
 
+        mDataList = new ArrayList<>();
+
         switchTab(0);
         switchFragment(0);
 
@@ -103,15 +119,9 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
 
             @Override
             public void afterTextChanged(Editable s) {
-                String searchContent = s.toString().trim();
+                String searchContent = s.toString();
                 if (!RxDataTool.isEmpty(searchContent)) {
-                    if (dataList == null)
-                        dataList = new ArrayList<>();
-                    dataList.clear();
-                    for (int i = 0; i < searchContent.length(); i++) {
-                        dataList.add("我是搜出来的条目" + (i + 1));
-                    }
-                    refreshList(searchContent);
+                    searchCity(searchContent);
                 } else {
                     recycler_destination_search.setVisibility(View.GONE);
                 }
@@ -126,7 +136,19 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
                     String s = et_hotel_destination.getText().toString();
                     if (RxDataTool.isEmpty(s))
                         return false;
-                    // TODO 搜索按钮被点击
+                    if (mDataList != null && mDataList.size() == 1) {
+                        BackCitySearch backCitySearch = mDataList.get(0);
+                        if (s.equals(backCitySearch.getRegionName())) {
+                            HotelDestination hotelDestination = new HotelDestination();
+                            hotelDestination.setId(backCitySearch.getId());
+                            hotelDestination.setName(backCitySearch.getRegionName());
+                            backWithData(hotelDestination);
+                        } else {
+                            ToastUtil.showToast(getApplicationContext(), "无法匹配到搜索城市");
+                        }
+                    } else {
+                        ToastUtil.showToast(getApplicationContext(), "无法匹配到搜索城市");
+                    }
                     return true;
                 }
                 return false;
@@ -134,18 +156,29 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
         });
     }
 
-    private void refreshList(String searchContent) {
+    // 带着数据返回前一个页面
+    private void backWithData(HotelDestination data) {
+        Intent intent = new Intent();
+        intent.putExtra("destination", data);
+        setResult(1, intent);
+        finish();
+    }
+
+    private void refreshSearchList() {
         if (recycler_destination_search.getVisibility() == View.GONE)
             recycler_destination_search.setVisibility(View.VISIBLE);
         if (mAdapter == null) {
-            mAdapter = new AdapterRecycler<String>(R.layout.item_search_relative, dataList) {
+            mAdapter = new AdapterRecycler<BackCitySearch>(R.layout.item_search_relative, mDataList) {
                 @Override
-                public void convert(ViewHolderRecycler holder, final String s, int position) {
-                    holder.setText(R.id.tv_name, s);
+                public void convert(final ViewHolderRecycler holder, final BackCitySearch backCitySearch, int position) {
+                    holder.setText(R.id.tv_name, backCitySearch.getRegionName());
                     holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            HotelDestination hotelDestination = new HotelDestination();
+                            hotelDestination.setId(backCitySearch.getId());
+                            hotelDestination.setName(backCitySearch.getRegionName());
+                            backWithData(hotelDestination);
                         }
                     });
                 }
@@ -310,5 +343,35 @@ public class HotelDestinationActivity extends BaseActivity implements View.OnCli
             }
         }
         return false;
+    }
+
+    private void searchCity(final String searchName) {
+        Flowable.fromArray(1)
+                .map(new Function<Integer, List<BackCitySearch>>() {
+                    @Override
+                    public List<BackCitySearch> apply(Integer integer) throws Exception {
+                        return RequestHelperSearch.getInstance().searchCity(searchName);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                    }
+                })
+                .subscribe(new Consumer<List<BackCitySearch>>() {
+                    @Override
+                    public void accept(List<BackCitySearch> backCitySearches) throws Exception {
+                        mDataList.clear();
+                        mDataList.addAll(backCitySearches);
+                        refreshSearchList();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
+                    }
+                });
     }
 }

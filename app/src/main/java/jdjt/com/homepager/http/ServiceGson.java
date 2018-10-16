@@ -2,6 +2,7 @@ package jdjt.com.homepager.http;
 
 import jdjt.com.homepager.domain.back.BackBase;
 import jdjt.com.homepager.domain.back.BackBaseList;
+import jdjt.com.homepager.domain.back.BackCitySearch;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
@@ -104,14 +105,24 @@ public interface ServiceGson {
      *
      * @return
      */
-    @POST("hotelbooking/reserve/serch/hotelChannelSerchIndustry")
+    @POST("hotelbooking/reserve/search/hotelChannelSerchIndustry")
     Call<BackBaseList<BackHotelType>> getHotelType();
 
     /**
      * 条件查询酒店列表
+     *
      * @return
      */
     @POST("hotelbooking/reserve/search/hotelChannelSearch")
     Call<BackBase<BackSearchHotel>> searchHotel(@Body RequestBody body);
+
+    /**
+     * 城市模糊查询
+     *
+     * @param body
+     * @return
+     */
+    @POST("api/api/v2/recommend/destination_search")
+    Call<BackBaseList<BackCitySearch>> searchCity(@Body RequestBody body);
 
 }

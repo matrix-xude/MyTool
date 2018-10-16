@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +42,7 @@ import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.domain.HotelDestination;
+import jdjt.com.homepager.domain.MVMNewCollection;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
@@ -68,6 +71,7 @@ import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
+    private SwipeRefreshLayout swipe_refresh_layout_home;
     private RelativeLayout rl_home_head_all; // 头部，包含状态栏部分
     private LinearLayout ll_home_head; // 头部，不包含状态栏部分
     private ImageView iv_home_head_scan; // 扫一扫
@@ -99,6 +103,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private final int TO_DESTINATION_ACTIVITY = 1; // 热门推荐查看更多跳转
 
+    Handler handler = new Handler() {
+    };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,6 +117,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initView() {
+        swipe_refresh_layout_home = findViewById(R.id.swipe_refresh_layout_home);
         rl_home_head_all = findViewById(R.id.rl_home_head_all);
         LayoutParamsUtil.setHeightPx(rl_home_head_all, RxImageTool.dp2px(mHeadDp) + StatusBarUtil.getStatusBarHeight(this));
         ll_home_head = findViewById(R.id.ll_home_head);
@@ -160,6 +168,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         requestHotRecommend();
         requestHotActivity();
         requestVacation();
+
+        swipe_refresh_layout_home.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+//                requestHeadBanner();
+                requestNavigation();
+                requestMVMNew();
+//                requestHotRecommend();
+//                requestHotActivity();
+                requestVacation();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipe_refresh_layout_home.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
     }
 
 
@@ -397,30 +424,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    private BaseBannerAdapter<MVMNewCollection> mVerticalBannerAdapter;
+
     // 刷新动态头条
-    private void refreshMVMNews(final List<BackMVMNew> list) {
-        // 用来索引的
-        List<Integer> indexList = new ArrayList<>();
+    private void refreshMVMNews(List<BackMVMNew> list) {
         // 每页展示2行数据
         int pagerCount = 2;
-        if (list == null) {
-            vertical_banner_home.stop();
-        } else {
-            for (int i = 0; pagerCount * i < list.size(); i++) {
-                indexList.add(i);
+        List<MVMNewCollection> newsList = new ArrayList<>();
+        for (int i = 0; i * pagerCount < list.size(); i++) {
+            MVMNewCollection collection = new MVMNewCollection();
+            newsList.add(collection);
+            List<BackMVMNew> mvmNewList = new ArrayList<>();
+            collection.setList(mvmNewList);
+            for (int j = 0; j < pagerCount; j++) {
+                if (i * pagerCount + j < list.size()) {
+                    mvmNewList.add(list.get(i * pagerCount + j));
+                }
             }
-            vertical_banner_home.setAdapter(new BaseBannerAdapter<Integer>(indexList) {
+        }
+
+        if (mVerticalBannerAdapter == null) {
+            mVerticalBannerAdapter = new BaseBannerAdapter<MVMNewCollection>(newsList) {
                 @Override
                 public View getView(VerticalBannerView verticalBannerView) {
                     return View.inflate(verticalBannerView.getContext(), R.layout.item_home_vertical_banner, null);
                 }
 
                 @Override
-                public void setItem(View view, Integer integer) {
+                public void setItem(View view, MVMNewCollection collection) {
                     TextView tv1 = view.findViewById(R.id.tv_item_home_vertical_banner_1);
                     TextView tv2 = view.findViewById(R.id.tv_item_home_vertical_banner_2);
-                    if (integer < list.size()) {
-                        final BackMVMNew backMVMNew = list.get(integer);
+
+                    List<BackMVMNew> backMVMNews = collection.getList();
+                    if (backMVMNews.size() > 0) {
+                        final BackMVMNew backMVMNew = backMVMNews.get(0);
                         tv1.setText(backMVMNew.getTitle());
                         tv1.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -429,8 +466,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                             }
                         });
                     }
-                    if (integer + 1 < list.size()) {
-                        final BackMVMNew backMVMNew = list.get(integer + 1);
+                    if (backMVMNews.size() > 1) {
+                        final BackMVMNew backMVMNew = backMVMNews.get(1);
                         tv2.setText(backMVMNew.getTitle());
                         tv2.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -440,10 +477,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                         });
                     }
                 }
-            });
+            };
+            vertical_banner_home.setAdapter(mVerticalBannerAdapter);
+            vertical_banner_home.start();
+        } else {
+            mVerticalBannerAdapter.setData(newsList);
+            vertical_banner_home.onChanged();
             vertical_banner_home.start();
         }
     }
+
+    private int aaa = 0;
 
     // 刷新导航模块，动态添加，没有数据隐藏
     private void refreshNavigation(List<BackNavigation> list) {
@@ -453,9 +497,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         } else {
             ll_home_navigation.removeAllViews();
             ll_home_navigation.setVisibility(View.VISIBLE);
-            for (BackNavigation navigation : list) {
-                ll_home_navigation.addView(createOneNavigation(navigation));
+            for (int i = 0; i < list.size() - aaa; i++) {
+                ll_home_navigation.addView(createOneNavigation(list.get(i)));
             }
+            aaa++;
         }
     }
 
