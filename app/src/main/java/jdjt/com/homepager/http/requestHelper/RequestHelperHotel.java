@@ -149,7 +149,7 @@ public class RequestHelperHotel {
         if (sort != null) {  // 排序
             SendHotelSearchLevel1 level1 = new SendHotelSearchLevel1(); // 第一级数据
             list.add(level1);
-            level1.setParamType("3");
+            level1.setParamType("4");
             List<SendHotelSearchLevel2> list2 = new ArrayList<>();
             level1.setParamContent(list2);
 
@@ -166,7 +166,7 @@ public class RequestHelperHotel {
         if (typeList != null && typeList.size() != 0) {  // 类型
             SendHotelSearchLevel1 level1 = new SendHotelSearchLevel1(); // 第一级数据
             list.add(level1);
-            level1.setParamType("4");
+            level1.setParamType("3");
             List<SendHotelSearchLevel2> list2 = new ArrayList<>();
             level1.setParamContent(list2);
 

@@ -51,7 +51,9 @@ import jdjt.com.homepager.util.LayoutParamsUtil;
 import jdjt.com.homepager.util.StatusBarUtil;
 import jdjt.com.homepager.util.ToastUtil;
 import jdjt.com.homepager.view.commonPopupWindow.CommonPopupWindow;
+import jdjt.com.homepager.view.commonRecyclerView.AdapterMultipleRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
+import jdjt.com.homepager.view.commonRecyclerView.MultipleTypeSupport;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
 import jdjt.com.homepager.view.verticalCalendar.CalendarData;
 import jdjt.com.homepager.view.verticalCalendar.CalendarUtil;
@@ -64,7 +66,7 @@ import jdjt.com.homepager.view.verticalCalendar.HotelCalendarView;
 
 public class HotelListActivity extends BaseActivity implements View.OnClickListener {
 
-    private LinearLayout ll_hotel_list_parent; // 整个页面，pop用到
+    private RelativeLayout rl_hotel_list_parent; // 整个页面，pop用到
     private View v_divide_1; // 搜索条件下的分割线，pop用到
 
     private ImageView iv_hotel_list_back; // 返回
@@ -79,6 +81,9 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
     private TextView tvDestination;
     private TextView tvSort;
     private TextView tvType;
+
+    private LinearLayout ll_hotel_no_internet;
+    private TextView tv_hotel_no_internet_reset;
 
     private SmartRefreshLayout smartRefreshLayout;
     private RecyclerView recyclerView;
@@ -103,8 +108,11 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
     private HotelType mLastHotelType; // 上个页面传入的类型，可能没有
     private List<BackHotelTypeLevel> mTypeList; // 所有类型
 
-    private AdapterRecycler mAdapter;
-    private List<BackHotel> mListData;
+    private AdapterMultipleRecycler mAdapter;
+    private List<BackHotel> mDataList; // 实际的查询结果数据
+    private List<BackHotel> mRecommendList; // 推荐的酒店数据
+    private List<BackHotel> mShowList; // 展示的酒店数据
+
 
     private Handler handler = new Handler() {
     };
@@ -125,7 +133,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initView() {
-        ll_hotel_list_parent = findViewById(R.id.ll_hotel_list_parent);
+        rl_hotel_list_parent = findViewById(R.id.rl_hotel_list_parent);
         v_divide_1 = findViewById(R.id.v_divide_1);
         iv_hotel_list_back = findViewById(R.id.iv_hotel_list_back);
         tv_hotel_list_search = findViewById(R.id.tv_hotel_list_search);
@@ -140,6 +148,8 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         tvType = findViewById(R.id.tv_hotel_list_type);
         smartRefreshLayout = findViewById(R.id.smart_refresh_layout_hotel_list);
         recyclerView = findViewById(R.id.recycler_hotel_list);
+        ll_hotel_no_internet = findViewById(R.id.ll_hotel_no_internet);
+        tv_hotel_no_internet_reset = findViewById(R.id.tv_hotel_no_internet_reset);
     }
 
     private void initData() {
@@ -150,6 +160,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         rlDestination.setOnClickListener(this);
         rlSort.setOnClickListener(this);
         rlType.setOnClickListener(this);
+        tv_hotel_no_internet_reset.setOnClickListener(this);
 
         Intent intent = getIntent();
         // 初始化入离时间
@@ -205,7 +216,9 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
 //            mTypeList.add(level);
 //        }
 
-        mListData = new ArrayList<>();
+        mDataList = new ArrayList<>();
+        mShowList = new ArrayList<>();
+        mRecommendList = new ArrayList<>();
         initRefreshLayout();
 
         requestHotelType(0);
@@ -219,10 +232,43 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
      * @param createNew
      */
     private void refreshList(boolean createNew) {
+
+        // 展示数据修改
+        mShowList.clear();
+        if (mDataList.isEmpty()) {
+            if (mRecommendList.isEmpty()) {
+                mShowList.add(new BackHotel(1));
+            } else {
+                mShowList.add(new BackHotel(1));
+                mShowList.add(new BackHotel(2));
+                mShowList.addAll(mRecommendList);
+            }
+        } else {
+            mShowList.addAll(mDataList);
+        }
+
         if (createNew || mAdapter == null) {
-            mAdapter = new AdapterRecycler<BackHotel>(R.layout.item_hotel_list, mListData) {
+            mAdapter = new AdapterMultipleRecycler<BackHotel>(mShowList, new MultipleTypeSupport<BackHotel>() {
+                @Override
+                public int getLayoutId(int itemType) {
+                    if (itemType == 1) {
+                        return R.layout.item_hotel_no_data;
+                    } else if (itemType == 2) {
+                        return R.layout.item_hotel_recommend_head;
+                    } else {
+                        return R.layout.item_hotel_list;
+                    }
+                }
+
+                @Override
+                public int getItemViewType(int position, BackHotel backHotel) {
+                    return backHotel.getNativeType();
+                }
+            }) {
                 @Override
                 public void convert(ViewHolderRecycler holder, BackHotel backHotel, int position) {
+                    if (backHotel.getNativeType() != 0)
+                        return;
                     ImageView ivIcon = holder.getView(R.id.iv_item_hotel_detail_icon);
                     GlideLoadUtil.loadImage(HotelListActivity.this, backHotel.getHotelHeadImage(), ivIcon);
                     holder.setText(R.id.tv_item_search_hotel_name, backHotel.getHotelName() + "");
@@ -268,8 +314,6 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(mAdapter);
             recyclerView.addItemDecoration(new CommonDecoration(RxImageTool.dp2px(0.48f), 1, Color.parseColor("#393A3C")));
-        } else {
-            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -296,11 +340,11 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                         .subscribe(new Consumer<BackSearchHotel>() {
                             @Override
                             public void accept(BackSearchHotel backSearchHotel) throws Exception {
-                                mListData.clear(); // 刷新成功，清除之前的数据
-                                mListData.addAll(backSearchHotel.getListHotel());
+                                mDataList.clear(); // 刷新成功，清除之前的数据
+                                mDataList.addAll(backSearchHotel.getListHotel());
                                 refreshList(true);
                                 smartRefreshLayout.finishRefresh();
-                                if (mListData.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
+                                if (mDataList.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
                                     smartRefreshLayout.setNoMoreData(true);
                                 } else {
                                     smartRefreshLayout.setNoMoreData(false);
@@ -323,7 +367,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                         .map(new Function<Integer, BackSearchHotel>() {
                             @Override
                             public BackSearchHotel apply(Integer integer) throws Exception {
-                                return RequestHelperHotel.getInstance().searchHotel("1", mListData.size() / PAGER_COUNT + 1 + ""
+                                return RequestHelperHotel.getInstance().searchHotel("1", mDataList.size() / PAGER_COUNT + 1 + ""
                                         , hasKeyword ? mKeyword : null, mStartDate, mEndDate, hasDestination ? mHotelDestination : null,
                                         hasSort ? mSortList.get(mCurrentChoiceSort) : null, hasType ? getChoiceHotelType() : null);
 
@@ -339,12 +383,12 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                         .subscribe(new Consumer<BackSearchHotel>() {
                             @Override
                             public void accept(BackSearchHotel backSearchHotel) throws Exception {
-                                if (mListData.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) { // 已经加载完所有，下拉后重新加载的问题
+                                if (mDataList.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) { // 已经加载完所有，下拉后重新加载的问题
                                     smartRefreshLayout.finishLoadMoreWithNoMoreData();
-                                }else {
-                                    mListData.addAll(backSearchHotel.getListHotel());
+                                } else {
+                                    mDataList.addAll(backSearchHotel.getListHotel());
                                     refreshList(false);
-                                    if (mListData.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
+                                    if (mDataList.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
                                         smartRefreshLayout.finishLoadMoreWithNoMoreData();
                                     } else {
                                         smartRefreshLayout.finishLoadMore();
@@ -387,6 +431,9 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.rl_hotel_list_type: // 酒店类型
                 popHotelType();
+                break;
+            case R.id.tv_hotel_no_internet_reset: // 无网络
+                searchHotelReset();
                 break;
         }
     }
@@ -456,7 +503,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
         tvTime.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 getResources().getDrawable(R.drawable.icon_hotel_arrow_up_orange), null);
 
-        popCalendar.showAtLocation(ll_hotel_list_parent, Gravity.BOTTOM, 0, 0);
+        popCalendar.showAtLocation(rl_hotel_list_parent, Gravity.BOTTOM, 0, 0);
     }
 
     // 弹出排序选择框
@@ -881,19 +928,22 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                 .subscribe(new Consumer<BackSearchHotel>() {
                     @Override
                     public void accept(BackSearchHotel backSearchHotel) throws Exception {
-                        mListData.clear(); // 清除之前数据
-                        mListData.addAll(backSearchHotel.getListHotel());
+                        ll_hotel_no_internet.setVisibility(View.GONE);
+                        mDataList.clear(); // 清除之前数据
+                        mDataList.addAll(backSearchHotel.getListHotel());
                         refreshList(true);
-                        if (mListData.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
+                        if (mDataList.size() >= RxDataTool.stringToInt(backSearchHotel.getCount())) {
                             smartRefreshLayout.setNoMoreData(true);
                         } else {
                             smartRefreshLayout.setNoMoreData(false);
                         }
+                        mRecommendList = backSearchHotel.getRecommendHotelList();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        mListData.clear(); // 清除之前数据
+                        ll_hotel_no_internet.setVisibility(View.VISIBLE);
+                        mDataList.clear(); // 清除之前数据
                         refreshList(true);
                         smartRefreshLayout.setNoMoreData(false);
                         ToastUtil.showToast(getApplicationContext(), throwable.getMessage());

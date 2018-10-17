@@ -10,7 +10,8 @@ public class BackSearchHotel {
 
     private String pageNo;
     private String count;
-    private List<BackHotel> listHotel;
+    private List<BackHotel> listHotel;  // 查询出的酒店列表
+    private List<BackHotel> recommendHotelList; // 酒店推荐列表，查询数据为0条时展示
 
     public String getPageNo() {
         return pageNo;
@@ -34,5 +35,13 @@ public class BackSearchHotel {
 
     public void setListHotel(List<BackHotel> listHotel) {
         this.listHotel = listHotel;
+    }
+
+    public List<BackHotel> getRecommendHotelList() {
+        return recommendHotelList;
+    }
+
+    public void setRecommendHotelList(List<BackHotel> recommendHotelList) {
+        this.recommendHotelList = recommendHotelList;
     }
 }

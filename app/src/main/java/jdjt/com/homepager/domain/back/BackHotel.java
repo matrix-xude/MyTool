@@ -20,6 +20,15 @@ public class BackHotel {
     private String is3DMap; // 是否开通3D地图     0:否 1:是
     private String isFreeWifi; // 是否有免费WIFI  0:否 1:是
     private String hotelType;  // 0：红树林系列酒店  1：加盟其他酒店
+    // 本地使用，不是接口返回的
+    private int nativeType; // 本地类型，0：原始数据  1：没找到符合条件的数据  2：您可能对以下酒店感兴趣头
+
+    public BackHotel() {
+    }
+
+    public BackHotel(int nativeType) {
+        this.nativeType = nativeType;
+    }
 
     public String getHotelCode() {
         return hotelCode;
@@ -123,5 +132,13 @@ public class BackHotel {
 
     public void setHotelType(String hotelType) {
         this.hotelType = hotelType;
+    }
+
+    public int getNativeType() {
+        return nativeType;
+    }
+
+    public void setNativeType(int nativeType) {
+        this.nativeType = nativeType;
     }
 }
