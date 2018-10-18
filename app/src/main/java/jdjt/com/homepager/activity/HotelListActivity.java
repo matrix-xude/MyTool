@@ -294,7 +294,7 @@ public class HotelListActivity extends BaseActivity implements View.OnClickListe
                     holder.setText(R.id.tv_item_hotel_detail_comment_count, RxDataTool.stringToInt(backHotel.getScoreCount()) + "条点评");
                     ImageView ivGift = holder.getView(R.id.iv_item_hotel_detail_gift);
                     ivGift.setVisibility(View.GONE);
-                    holder.setText(R.id.tv_item_hotel_detail_price_money, String.format("¥%s起", RxDataTool.stringToInt(backHotel.getRoomTypePriceMin())));
+                    holder.setText(R.id.tv_item_hotel_detail_price_money, String.format("¥%s起", backHotel.getRoomTypePriceMin()));
 
                     holder.setOnClickListener(R.id.iv_item_hotel_detail_map, new View.OnClickListener() {
                         @Override

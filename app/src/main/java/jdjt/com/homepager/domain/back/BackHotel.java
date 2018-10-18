@@ -1,5 +1,7 @@
 package jdjt.com.homepager.domain.back;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by xxd on 2018/10/12.
  * 数据全的酒店类型

@@ -172,11 +172,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         swipe_refresh_layout_home.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                requestHeadBanner();
+                requestHeadBanner();
                 requestNavigation();
                 requestMVMNew();
 //                requestHotRecommend();
-//                requestHotActivity();
+                requestHotActivity();
                 requestVacation();
 
                 handler.postDelayed(new Runnable() {
@@ -296,7 +296,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 if (type == 0) { // 度假套餐
                     holder.setText(R.id.tv_item_home_vacation_set_meal_name, level.getName() + "");
                     holder.setText(R.id.tv_item_home_vacation_set_meal_price, "¥" + level.getPrice());
-                    holder.setText(R.id.tv_item_home_vacation_set_meal_save, "已节省¥" + RxDataTool.stringToInt(level.getDiscountMoney()));
+                    holder.setText(R.id.tv_item_home_vacation_set_meal_save, "已节省¥" + level.getDiscountMoney());
                     ImageView ivBg = holder.getView(R.id.iv_item_home_vacation_set_meal_bg);
                     GlideLoadUtil.loadImage(getApplicationContext(), level.getImageUrl(), ivBg);
                     holder.setOnClickListener(R.id.rl_item_home_holiday_set_meal, new View.OnClickListener() {
