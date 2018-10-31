@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,6 +17,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -175,7 +179,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 requestHeadBanner();
                 requestNavigation();
                 requestMVMNew();
-//                requestHotRecommend();
+                requestHotRecommend();
                 requestHotActivity();
                 requestVacation();
 
@@ -362,8 +366,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    private int aa = 0;
+
     // 刷新热门推荐模块
-    private void refreshHotRecommend(List<BackHotRecommend> list) {
+    private void refreshHotRecommend(final List<BackHotRecommend> list) {
         if (RxDataTool.isEmpty(list)) {
             ll_home_hot_recommend.setVisibility(View.GONE);
             return;
@@ -371,11 +377,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             ll_home_hot_recommend.setVisibility(View.VISIBLE);
         }
 
-        int heightFirstRow = RxImageTool.dp2px(73);  // 第一行item高度
-        int heightOtherRow = RxImageTool.dp2px(38);  // 其他行item高度
-        int divide = RxImageTool.dp2px(8); // 间隔
-        int lineCount = 3; // 列数
-        int maxShowCount = lineCount * 3; // 最大显示的数量
+        for (BackHotRecommend recommend : list) {
+            recommend.setName(recommend.getName() + aa);
+            List<BackHotRecommendLevel> children = recommend.getChildren();
+            for (BackHotRecommendLevel level : children) {
+                level.setName(level.getName() + aa);
+            }
+        }
+        aa++;
+
+        final int heightFirstRow = RxImageTool.dp2px(73);  // 第一行item高度
+        final int heightOtherRow = RxImageTool.dp2px(38);  // 其他行item高度
+        final int divide = RxImageTool.dp2px(8); // 间隔
+        final int lineCount = 3; // 列数
+        final int maxShowCount = lineCount * 3; // 最大显示的数量
 
         // 必须在初始化viewpager的高度，才能显示出切换的fragment
         int maxDataCount = 0; // 最大的那个数据条目数，确定高度
@@ -397,7 +412,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
 
         // 初始化切换tab宽度
-        int size = list.size();
+        final int size = list.size();
         sliding_tab_home_hot_recommend.setTabWidth(RxImageTool.px2dp((RxDeviceTool.getScreenWidths(this))
                 - sliding_tab_home_hot_recommend.getPaddingStart() - sliding_tab_home_hot_recommend.getPaddingEnd()) / size);
 
@@ -406,13 +421,104 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         for (int i = 0; i < size; i++) {
             titles[i] = list.get(i).getName();
         }
-        ArrayList<Fragment> fragments = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            HotRecommendFragment hotRecommendFragment = new HotRecommendFragment();
-            hotRecommendFragment.setData(list.get(i), heightFirstRow, heightOtherRow, divide, lineCount, maxShowCount);
-            fragments.add(hotRecommendFragment);
-        }
-        sliding_tab_home_hot_recommend.setViewPager(vp_home_hot_recommend, titles, this, fragments);
+        final ArrayList<Fragment> fragments = new ArrayList<>();
+//        for (int i = 0; i < size; i++) {
+//            HotRecommendFragment hotRecommendFragment = new HotRecommendFragment();
+//            hotRecommendFragment.setData(list.get(i), heightFirstRow, heightOtherRow, divide, lineCount, maxShowCount);
+//            fragments.add(hotRecommendFragment);
+//        }
+//        vp_home_hot_recommend.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+//            @Override
+//            public Fragment getItem(int position) {
+//                return fragments.get(position);
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return size;
+//            }
+//
+//            @Override
+//            public long getItemId(int position) {
+//                return Long.parseLong(position + "" + aa);
+//            }
+//        });
+        vp_home_hot_recommend.setOffscreenPageLimit(size - 1);
+        vp_home_hot_recommend.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return size;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+//                return super.instantiateItem(container, position);
+                View view = View.inflate(HomeActivity.this, R.layout.fragment_hot_recommend, null);
+                RecyclerView recyclerView = view.findViewById(R.id.recycler_fragment_hot_recommend);
+
+                final BackHotRecommend hotRecommend = list.get(position);
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(HomeActivity.this, lineCount, GridLayoutManager.VERTICAL, false) {
+                    @Override
+                    public boolean canScrollVertically() {
+                        return false;
+                    }
+                };
+                recyclerView.setLayoutManager(gridLayoutManager);
+                recyclerView.setAdapter(new AdapterRecycler<BackHotRecommendLevel>(R.layout.item_home_hot_recommend, hotRecommend.getChildren(),
+                        new AdapterRecycler.Builder().setMaxShowCount(maxShowCount)) {
+                    @Override
+                    public void convert(ViewHolderRecycler holder, final BackHotRecommendLevel backHotRecommendLevel, int position) {
+                        // 替换每个条目的高度
+                        RelativeLayout rlItem = holder.getView(R.id.rl_item_home_hot_recommend);
+                        LayoutParamsUtil.setHeightPx(rlItem, position < lineCount ? heightFirstRow : heightOtherRow);
+                        BackHotRecommendLevel level = dataList.get(position);
+                        holder.setText(R.id.tv_item_home_hot_recommend_name, level.getName());
+                        if (position < lineCount) { // 第一行才有图背景
+                            TextView tvName = holder.getView(R.id.tv_item_home_hot_recommend_name);
+                            tvName.setBackgroundColor(Color.TRANSPARENT);
+                            ImageView ivBg = holder.getView(R.id.iv_item_home_hot_recommend_bg);
+                            GlideLoadUtil.loadImage(getApplicationContext(), level.getImage(), ivBg);
+                        }
+                        holder.setOnClickListener(R.id.tv_item_home_hot_recommend_name, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HotelDestination destination = new HotelDestination();
+                                destination.setType(hotRecommend.getType());
+                                destination.setTitle(hotRecommend.getName());
+                                destination.setId(backHotRecommendLevel.getRefId());
+                                destination.setName(backHotRecommendLevel.getName());
+                                // TODO 跳转到全部搜索页面
+                                ToastUtil.showToast(getApplicationContext(), backHotRecommendLevel.getName());
+                            }
+                        });
+                    }
+                });
+                recyclerView.addItemDecoration(new CommonDecoration(divide, lineCount, Color.TRANSPARENT));
+
+                container.addView(view);
+                return view;
+
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+//                super.destroyItem(container, position, object);
+                container.removeView((View) object);
+            }
+        });
+
+//        sliding_tab_home_hot_recommend.setViewPager(vp_home_hot_recommend, titles, this, fragments);
+        if (sliding_tab_home_hot_recommend.getTabCount() > 0)
+            sliding_tab_home_hot_recommend.setCurrentTab(0);
+        sliding_tab_home_hot_recommend.setViewPager(vp_home_hot_recommend, titles);
+//        vp_home_hot_recommend.setCurrentItem(0);
+//        sliding_tab_home_hot_recommend.setCurrentTab(0);
 
         // 查看更多
         tv_home_hot_recommend_more.setOnClickListener(new View.OnClickListener() {

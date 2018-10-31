@@ -249,12 +249,12 @@ public class HotelSearchActivity extends BaseActivity implements View.OnClickLis
         List<String> list = new ArrayList<>();
         list.add("水稻公园");
         list.add("青岛酒店");
-        list.add("三亚湾");
-        list.add("cnakcsjajagfsgs");
-        list.add("吧啦吧啦巴拉巴拉啊吧阿里阿巴吧");
-        list.add("入云龙");
-        list.add("很好跟发");
-        list.add("厚积薄发");
+//        list.add("三亚湾");
+//        list.add("cnakcsjajagfsgs");
+//        list.add("吧啦吧啦巴拉巴拉啊吧阿里阿巴吧");
+//        list.add("入云龙");
+//        list.add("很好跟发");
+//        list.add("厚积薄发");
         return list;
     }
 }
