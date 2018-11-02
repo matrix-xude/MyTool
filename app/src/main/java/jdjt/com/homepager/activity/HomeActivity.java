@@ -204,7 +204,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.iv_home_head_scan:
 //                RxToast.showToast("扫一扫");
-                Intent intent2 = new Intent(HomeActivity.this, HotelListActivity.class);
+                Intent intent2 = new Intent(HomeActivity.this, VExperienceBooking.class);
                 startActivity(intent2);
                 break;
             case R.id.tv_home_head_search:
