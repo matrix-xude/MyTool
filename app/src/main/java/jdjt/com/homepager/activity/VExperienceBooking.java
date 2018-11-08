@@ -59,7 +59,7 @@ import jdjt.com.homepager.view.verticalCalendar.VExperienceMonthView;
  * V客会体验卡预约入住
  */
 
-public class VExperienceBooking extends BaseActivity implements View.OnClickListener {
+public class     VExperienceBooking extends BaseActivity implements View.OnClickListener {
 
     private NestedScrollView nest_scroll_v_experience;
     private TextView tvHotelName; // 选择酒店
@@ -315,8 +315,8 @@ public class VExperienceBooking extends BaseActivity implements View.OnClickList
             return;
         int dayCount = CalendarUtil.getDayCountBetweenBothCalendar(CalendarUtil.getCalendarData(mStartData),
                 CalendarUtil.getCalendarData(mEndData));
-        tvCheckDescribe.setText(String.format(Html.fromHtml(getResources().getString(R.string.code_describe)).toString(),
-                dayCount, dayCount * mCurrentRoomCount));
+        String str = "您共预约<font color=\"#F39800\">%s</font>晚，请选择<font color=\"#F39800\">%s</font>个要使用核销码";
+        tvCheckDescribe.setText(Html.fromHtml(String.format(str, dayCount, dayCount * mCurrentRoomCount)));
     }
 
     // 改变房间总数（预加载）
