@@ -151,15 +151,15 @@ public abstract class MonthView extends View implements View.OnClickListener {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    protected int getLineCount() {
+    public int getLineCount() {
         return mLineCount;
     }
 
-    protected int getItemWidth() {
+    public int getItemWidth() {
         return mItemWidth;
     }
 
-    protected int getItemHeight() {
+    public int getItemHeight() {
         return mItemHeight;
     }
 

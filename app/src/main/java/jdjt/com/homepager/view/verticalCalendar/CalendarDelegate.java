@@ -117,6 +117,21 @@ public class CalendarDelegate {
         this.mMaxYearDay = maxYearDay;
     }
 
+    public void setRange(String minTime, String maxTime) {
+        CalendarData min = CalendarUtil.getCalendarData(minTime);
+        CalendarData max = CalendarUtil.getCalendarData(maxTime);
+        setRange(min.getYear(), min.getMonth(), min.getDay(), max.getYear(), max.getMonth(), max.getDay());
+    }
+
+    public CalendarData getCurrentDay() {
+        return mCurrentDate;
+    }
+
+    public void setCurrentDay(String time) {
+        mCurrentDate = CalendarUtil.getCalendarData(time);
+        mCurrentDate.setCurrentDay(true);
+    }
+
     public int getWeekStart() {
         return mWeekStart;
     }
@@ -165,7 +180,5 @@ public class CalendarDelegate {
         return mMaxYearDay;
     }
 
-    CalendarData getCurrentDay() {
-        return mCurrentDate;
-    }
+
 }

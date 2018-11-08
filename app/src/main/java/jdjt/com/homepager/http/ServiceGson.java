@@ -12,6 +12,7 @@ import jdjt.com.homepager.domain.back.BackMVMNew;
 import jdjt.com.homepager.domain.back.BackNavigation;
 import jdjt.com.homepager.domain.back.BackRecommendHotelType;
 import jdjt.com.homepager.domain.back.BackSearchHotel;
+import jdjt.com.homepager.domain.back.BackVExperienceInfo;
 import jdjt.com.homepager.domain.back.BackVacation;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -124,5 +125,13 @@ public interface ServiceGson {
      */
     @POST("api/api/v2/recommend/destination_search")
     Call<BackBaseList<BackCitySearch>> searchCity(@Body RequestBody body);
+
+    /**
+     * 获取V客会体验卡订房信息
+     * @param body
+     * @return
+     */
+    @POST("api/api/v1/vcard/experience_ticket/reserve_info")
+    Call<BackBase<BackVExperienceInfo>> getVExperiecInfo(@Body RequestBody body);
 
 }
