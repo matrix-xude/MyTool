@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
@@ -24,8 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
-import com.taobao.library.BaseBannerAdapter;
-import com.taobao.library.VerticalBannerView;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxDeviceTool;
 import com.vondear.rxtool.RxImageTool;
@@ -46,7 +43,6 @@ import io.reactivex.schedulers.Schedulers;
 import jdjt.com.homepager.R;
 import jdjt.com.homepager.decoration.CommonDecoration;
 import jdjt.com.homepager.domain.HotelDestination;
-import jdjt.com.homepager.domain.MVMNewCollection;
 import jdjt.com.homepager.domain.back.BackHeadImage;
 import jdjt.com.homepager.domain.back.BackHotActivity;
 import jdjt.com.homepager.domain.back.BackHotRecommend;
@@ -56,7 +52,6 @@ import jdjt.com.homepager.domain.back.BackNavigation;
 import jdjt.com.homepager.domain.back.BackNavigationLevel;
 import jdjt.com.homepager.domain.back.BackVacation;
 import jdjt.com.homepager.domain.back.BackVacationLevel;
-import jdjt.com.homepager.framgnet.HotRecommendFragment;
 import jdjt.com.homepager.http.requestHelper.RequestHelperHomePager;
 import jdjt.com.homepager.util.GlideLoadUtil;
 import jdjt.com.homepager.util.LayoutParamsUtil;
@@ -67,6 +62,9 @@ import jdjt.com.homepager.view.banner.listener.OnBannerListener;
 import jdjt.com.homepager.view.banner.loader.ImageLoader;
 import jdjt.com.homepager.view.commonRecyclerView.AdapterRecycler;
 import jdjt.com.homepager.view.commonRecyclerView.ViewHolderRecycler;
+
+//import com.taobao.library.BaseBannerAdapter;
+//import com.taobao.library.VerticalBannerView;
 
 /**
  * Created by xxd on 2018/9/5.
@@ -88,7 +86,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout ll_home_navigation; // 导航状态，动态添加
 
-    private VerticalBannerView vertical_banner_home; // 头条
+//    private VerticalBannerView vertical_banner_home; // 头条
     private ImageView iv_home_house_car; // 房车营地
 
     private LinearLayout ll_home_hot_recommend; // 热门推荐整个模块
@@ -135,7 +133,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         banner_home_head = findViewById(R.id.banner_home_head);
         LayoutParamsUtil.setHeight(banner_home_head, mHeadBannerDp);
         ll_home_navigation = findViewById(R.id.ll_home_navigation);
-        vertical_banner_home = findViewById(R.id.vertical_banner_home);
+//        vertical_banner_home = findViewById(R.id.vertical_banner_home);
         iv_home_house_car = findViewById(R.id.iv_home_house_car);
         ll_home_hot_recommend = findViewById(R.id.ll_home_hot_recommend);
         sliding_tab_home_hot_recommend = findViewById(R.id.sliding_tab_home_hot_recommend);
@@ -168,7 +166,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         });
         requestHeadBanner();
         requestNavigation();
-        requestMVMNew();
+//        requestMVMNew();
         requestHotRecommend();
         requestHotActivity();
         requestVacation();
@@ -178,7 +176,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             public void onRefresh() {
                 requestHeadBanner();
                 requestNavigation();
-                requestMVMNew();
+//                requestMVMNew();
                 requestHotRecommend();
                 requestHotActivity();
                 requestVacation();
@@ -530,9 +528,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
-    private BaseBannerAdapter<MVMNewCollection> mVerticalBannerAdapter;
+//    private BaseBannerAdapter<MVMNewCollection> mVerticalBannerAdapter;
 
-    // 刷新动态头条
+    /*// 刷新动态头条
     private void refreshMVMNews(List<BackMVMNew> list) {
         // 每页展示2行数据
         int pagerCount = 2;
@@ -591,7 +589,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             vertical_banner_home.onChanged();
             vertical_banner_home.start();
         }
-    }
+    }*/
 
     private int aaa = 0;
 
@@ -794,7 +792,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 });
     }
 
-    private void requestMVMNew() {
+    /*private void requestMVMNew() {
         Flowable.fromArray(1)
                 .map(new Function<Integer, List<BackMVMNew>>() {
                     @Override
@@ -820,7 +818,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                         ToastUtil.showToast(getApplicationContext(), throwable.getMessage());
                     }
                 });
-    }
+    }*/
 
     private void requestHotRecommend() {
         Flowable.fromArray(1)
